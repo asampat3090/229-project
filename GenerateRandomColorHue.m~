@@ -1,0 +1,35 @@
+function rgb = GenerateRandomColorHue(color)
+
+sensitivity = 0.1;
+if(strcmpi(color,'red')
+    eps = sensitivity*rand(1,3);
+    rgb = [1 0 0] + eps;
+end
+
+if(strcmpi(color,'green')
+    eps = sensitivity*rand(1,3);
+    rgb = [0 1 0] + eps;
+end
+
+if(strcmpi(color,'blue')
+    eps = sensitivity*rand(1,3);
+    rgb = [0 0 1] + eps;
+end
+
+if(strcmpi(color,'black')
+    eps = sensitivity*rand(1,3);
+    rgb = [0 0 0] + eps;
+end
+
+
+[1 1 1]
+
+w
+
+white
+
+[0 0 0]
+
+k
+
+black

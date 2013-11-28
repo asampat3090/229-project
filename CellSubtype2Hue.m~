@@ -1,0 +1,8 @@
+function rgb = CellSubtype2Hue(cellSubtype)
+
+types = {'', 'B', 'T', 'NK', 'pDC', 'Monocyte'};
+
+typeToColorMap = {'StemCell', 'red'};
+
+cellType = CellTypeFromSubCell(cellSubtype);
+if(strcmpi(cellType), 

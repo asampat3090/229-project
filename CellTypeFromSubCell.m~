@@ -1,0 +1,44 @@
+function cellType = CellTypeFromSubCell(subCellType)
+
+types = {'StemCell', 'B', 'T', 'NK', 'pDC', 'Monocyte'};
+
+StemCells = {'HSC', 'MPP', 'CMP', 'GMP', 'MEP'};
+BCells = {'Plasma cell', 'Pre-B I', 'Pre-B II', 'Immature B', 'Mature CD38lo B', 'Mature CD38mid B'};
+TCells = {'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T'};
+NK = {'NK'};
+pDC = {'Plasmacytoid DC'};
+Monocytes = {'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'};
+    
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+for i =1:length(StemCells)
+    if(strcmpi(StemCells{i}, subCellType))
+        cellType = types(1)
+    end
+end
+
+end
