@@ -1,18 +1,5 @@
 c = CellData('Marrow1_15_PVO4_Marrow1_PVO4_Mature CD8+ T.fcs');
 d = CellData('Marrow1_15_PVO4_Marrow1_PVO4_GMP.fcs');
-e = CellData('Marrow1_01_Basal1_Marrow1_Basal1_Naive CD8+ T.fcs');
-m_cd = CellData.merge([c d]);
-m_de = CellData.merge([d e]);
-m = CellData.merge([m_cd m_de])
-
-%%
-clear all; clc;
-cell = {1 2 3}
-s = Set(cell)
-s.contains(1)
-s.contains(2)
-s.contains({1})
-s.contains({1, {2}})
 
 %% Get Cell Types from all Basal Files in directory
 
