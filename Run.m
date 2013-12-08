@@ -1,5 +1,7 @@
 clear all;
 clc;
+currentFolder = pwd;
+addpath(genpath(currentFolder));
 
 % Tutorial:
 % set the MarrowRegion, set whichCellTypes, set numRandTrainExPerFile, set
@@ -130,10 +132,32 @@ end
 
 % Run PCA on the data
 dataStack = asinh(dataStack/5);
-[coeff,score,latent] = princomp(dataStack);
+[coeff,score_PCA,latent] = princomp(dataStack);
 size(coeff)
-size(score)
+size(score_PCA)
+size(dataStack)
 size(latent)
+
+% Run tSNE on the data  - still unsure of output
+
+% The function performs symmetric t-SNE on the NxD dataset X to reduce its 
+% dimensionality to no_dims dimensions (default = 2). The data is 
+% preprocessed using PCA, reducing the dimensionality to initial_dims 
+% dimensions (default = 30). Alternatively, an initial solution obtained 
+% from an other dimensionality reduction technique may be specified in 
+% initial_solution. The perplexity of the Gaussian kernel that is employed 
+% can be specified through perplexity (default = 30). The labels of the
+% data are not used by t-SNE itself, however, they are used to color
+% intermediate plots. Please provide an empty labels matrix [] if you
+% don't want to plot results during the optimization.
+% The low-dimensional data representation is returned in mappedX.
+
+score_tSNE = tsne(dataStack);
+%TSNE Performs symmetric t-SNE on dataset X
+%
+%   mappedX = tsne(X, labels, no_dims, initial_dims, perplexity)
+%   mappedX = tsne(X, labels, initial_solution, perplexity)
+%
 
 % Initialize score indices based on numCellsPerCellType (for group
 % scattering)
@@ -145,6 +169,9 @@ scoreIndices = [0, scoreIndices];
 
 % Create figure and scatter plot the data, labelling colors based on cell
 % types
+
+% Add each scatter plot as a subplot in grid.
+
 figure;
 hold on;
 for i = 1:length(whichCellTypes)
@@ -152,9 +179,16 @@ for i = 1:length(whichCellTypes)
     ub = scoreIndices(i+1);
     if(plotIn3D)
         display('plotting 3D');
-        scatter3(score(lb:ub,1),score(lb:ub,2),score(lb:ub,3), 20, colors(i,:));
+        scatter3(score_PCA(lb:ub,1),score_PCA(lb:ub,2),score_PCA(lb:ub,3), 20, colors(i,:));
     else
-        scatter(score(lb:ub,1),score(lb:ub,2), 20, colors(i,:));
+        % Plot scatter for PCA
+        subplot(1,2,1);
+        scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
+        title('PCA')
+        % Plot scatter for tSNE
+        subplot(1,2,2);
+        scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
+        title('t-SNE')
     end
 %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
 %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
