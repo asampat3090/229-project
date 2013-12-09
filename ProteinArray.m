@@ -1,3 +1,8 @@
+% DEPRECATED AND UNUSED OBJECT. 
+% DELETE IN THIS OR LATER VERSIONS. 
+% the new fcs reader takes care of the issue that this object was meant to
+% solve
+
 classdef ProteinArray < handle
     %ProteinARray A smart array object that contains all the proteins used and
     %their corresponding tag metals. Has the ability to reference either

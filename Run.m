@@ -1,15 +1,21 @@
-clear all;
-clc;
+%<<<<<<< HEAD
+c = CellData('Marrow1_15_PVO4_Marrow1_PVO4_Mature CD8+ T.fcs');
+d = CellData('Marrow1_15_PVO4_Marrow1_PVO4_GMP.fcs');
+e = CellData('Marrow1_01_Basal1_Marrow1_Basal1_Naive CD8+ T.fcs');
+m_cd = CellData.merge([c d]);
+m_de = CellData.merge([d e]);
+m = CellData.merge([m_cd m_de]);
+
+%%
+clear all; clc;
+cell = {1 2 3}
+s = Set(cell)
+s.contains(1)
+s.contains(2)
+s.contains({1})
+s.contains({1, {2}})
 currentFolder = pwd;
 addpath(genpath(currentFolder));
-
-% Tutorial:
-% set the MarrowRegion, set whichCellTypes, set numRandTrainExPerFile, set
-% proteinRange, 
-
-% for i =1:length(CellTypes)
-%     display(['hue of ' CellTypes{i} ' is ' num2str(CellSubtype2Hue(CellTypes{i}))])
-% end
 
 %% Get Cell Types from all Basal Files in directory
 
@@ -194,6 +200,7 @@ for i = 1:length(whichCellTypes)
 end
 legend(whichCellTypes)
 hold off;
+drawnow
 %% 
 
 % % Run non-classical MDS on the data
@@ -224,6 +231,7 @@ hold off;
 % end
 % legend(whichCellTypes)
 % hold off;
+% drawnow
 %% 
 
 % Run ICA on the data - good for separation
@@ -268,7 +276,7 @@ for i = 1:length(whichCellTypes)
 end
 legend(whichCellTypes)
 hold off;
-
+drawnow
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
@@ -307,6 +315,7 @@ hold off;
 % end
 % legend(whichCellTypes)
 % hold off;
+% drawnow
 %% 
 
 % % Run tSNE on the data 
@@ -344,6 +353,7 @@ hold off;
 % end
 % legend(whichCellTypes)
 % hold off;
+% drawnow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
