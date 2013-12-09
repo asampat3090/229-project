@@ -14,20 +14,8 @@ s.contains(1)
 s.contains(2)
 s.contains({1})
 s.contains({1, {2}})
-%% =======
-clear all;
-clc;
 currentFolder = pwd;
 addpath(genpath(currentFolder));
-
-% Tutorial:
-% set the MarrowRegion, set whichCellTypes, set numRandTrainExPerFile, set
-% proteinRange, 
-
-% for i =1:length(CellTypes)
-%     display(['hue of ' CellTypes{i} ' is ' num2str(CellSubtype2Hue(CellTypes{i}))])
-% end
-%>>>>>>> 9bc50fc2d55760e67e6954c900a105989973a82d
 
 %% Get Cell Types from all Basal Files in directory
 
@@ -96,7 +84,7 @@ Monocytes = {'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'};
 whichCellTypes = Monocytes; 
 numRandTrainExPerFile = 800; 
 plotIn3D = false;
-hueSensitivity = 5;
+hueSensitivity = 10;
 
 proteinRange = 3:40; %Should be within 3:40 (3 is the first column index corresponding to a protein, 40 is the last). With Karen I did 5:30
 useSurfaceProteins = false; %if set to true, the script will only consider proteins with 'CD' in their names
@@ -148,34 +136,8 @@ for j = 1:length(whichCellTypes)
     end
 end
 
-% Run PCA on the data
-dataStack = asinh(dataStack/5);
-[coeff,score_PCA,latent] = princomp(dataStack);
-size(coeff)
-size(score_PCA)
-size(dataStack)
-size(latent)
-
-% Run tSNE on the data  - still unsure of output
-
-% The function performs symmetric t-SNE on the NxD dataset X to reduce its 
-% dimensionality to no_dims dimensions (default = 2). The data is 
-% preprocessed using PCA, reducing the dimensionality to initial_dims 
-% dimensions (default = 30). Alternatively, an initial solution obtained 
-% from an other dimensionality reduction technique may be specified in 
-% initial_solution. The perplexity of the Gaussian kernel that is employed 
-% can be specified through perplexity (default = 30). The labels of the
-% data are not used by t-SNE itself, however, they are used to color
-% intermediate plots. Please provide an empty labels matrix [] if you
-% don't want to plot results during the optimization.
-% The low-dimensional data representation is returned in mappedX.
-
-score_tSNE = tsne(dataStack);
-%TSNE Performs symmetric t-SNE on dataset X
-%
-%   mappedX = tsne(X, labels, no_dims, initial_dims, perplexity)
-%   mappedX = tsne(X, labels, initial_solution, perplexity)
-%
+%% 
+%%%%%%%%%%%%%% Prepare the Data for Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialize score indices based on numCellsPerCellType (for group
 % scattering)
@@ -190,7 +152,34 @@ scoreIndices = [0, scoreIndices];
 
 % Add each scatter plot as a subplot in grid.
 
-figure;
+% Setup all of the relevant strings 
+space = ' ';
+newline = '\n'; % for use with sprintf
+if(useSurfaceProteins)
+    str_sp = ' surface proteins only';
+else 
+    str_sp = ' all proteins';
+end
+expr_title = sprintf([MarrowRegion space 'data' str_sp newline '<' num2str(numRandTrainExPerFile) ' random cells taken from each file']);
+
+
+%%%%%%%%% DIMENSIONAL REDUCTION ALGORITHMS & PLOTTING %%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 
+
+% Run PCA on the data
+display('Running PCA on dataset')
+dataStack = asinh(dataStack/5);
+[coeff,score_PCA,latent] = princomp(dataStack);
+size(coeff)
+size(score_PCA)
+size(dataStack)
+size(latent)
+
+% Plot the Figure for PCA
+display('Plotting PCA Result')
+figure('name','PCA');
 hold on;
 for i = 1:length(whichCellTypes)
     lb = scoreIndices(i)+1;
@@ -200,33 +189,187 @@ for i = 1:length(whichCellTypes)
         scatter3(score_PCA(lb:ub,1),score_PCA(lb:ub,2),score_PCA(lb:ub,3), 20, colors(i,:));
     else
         % Plot scatter for PCA
-        subplot(1,2,1);
         scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
-        title('PCA')
-        % Plot scatter for tSNE
-        subplot(1,2,2);
-        scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
-        title('t-SNE')
+        xlabel('p1');
+        ylabel('p2');
+        title(strcat('PCA ',expr_title));
     end
 %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
 %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
 %     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
 end
 legend(whichCellTypes)
+hold off;
+drawnow
+%% 
 
+% % Run non-classical MDS on the data
+% display ('Running non-classical MDS')
+% dissimilarities = pdist(zscore(dataStack));
+% [score_ncMDS,stress] = mdscale(dissimilarities,2,'criterion','metricstress');
+% 
+% % Plot the Figure for non-classical MDS
+% display ('Plotting non-classical MDS Result')
+% figure('name','ncMDS');
+% hold on;
+% for i = 1:length(whichCellTypes)
+%     lb = scoreIndices(i)+1;
+%     ub = scoreIndices(i+1);
+%     if(plotIn3D)
+%         display('plotting 3D');
+%         scatter3(score_ncMDS(lb:ub,1),score_ncMDS(lb:ub,2),score_ncMDS(lb:ub,3), 20, colors(i,:));
+%     else
+%         % Plot scatter for PCA
+%         scatter(score_ncMDS(lb:ub,1),score_ncMDS(lb:ub,2), 20, colors(i,:));
+%         xlabel('p1');
+%         ylabel('p2');
+%         title(strcat('non-classical MDS ',expr_title));
+%     end
+% %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
+% %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
+% %     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
+% end
+% legend(whichCellTypes)
+% hold off;
+% drawnow
+%% 
 
+% Run ICA on the data - good for separation
 
-space = ' ';
-newline = '\n'; % for use with sprintf
-if(useSurfaceProteins)
-    str_sp = ' surface proteins only';
-else 
-    str_sp = ' all proteins';
+%%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 
+
+% Run Isomap Algorithm on Data
+display('Running Isomap on Data');
+[score_isomap, mapping_isomap] = isomap(dataStack);
+%ISOMAP Runs the Isomap algorithm
+%
+%   [mappedX, mapping] = isomap(X, no_dims, k); 
+
+% Plot the Figure for Isomap
+display('Plotting Isomap Result')
+figure('name','Isomap');
+hold on;
+for i = 1:length(whichCellTypes)
+    lb = scoreIndices(i)+1;
+    ub = scoreIndices(i+1);
+    if ub>size(score_isomap,1)
+        ub=size(score_isomap,1)
+    end
+    if(plotIn3D)
+        display('plotting 3D');
+        if(size(score_isomap,2)<3)
+            display('Cannot plot SNE results in 3D - need more data - Run tSNE with no_dims of >=3');
+        else
+            scatter3(score_isomap(lb:ub,1),score_isomap(lb:ub,2),score_isomap(lb:ub,3), 20, colors(i,:));
+        end
+    else
+        % Plot scatter for tSNE
+        scatter(score_isomap(lb:ub,1),score_isomap(lb:ub,2), 20, colors(i,:));
+        xlabel('p1');
+        ylabel('p2');
+        title(strcat('Isomap ',expr_title));
+    end
+%     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
+%     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
+%     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
 end
-expr_title = sprintf([MarrowRegion space 'data' str_sp newline '<' num2str(numRandTrainExPerFile) ' random cells taken from each file']);
-xlabel('p1');
-ylabel('p2');
-title(expr_title);
+legend(whichCellTypes)
+hold off;
+drawnow
+
+%%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
+%% 
+
+% % Run SNE on Data 
+% display('Running SNE on Data')
+% score_SNE = sne(dataStack);
+% %SNE Implementation of Stochastic Neighbor Embedding
+% %
+% %   mappedX = sne(X, no_dims, perplexity)
+
+% % Plot the Figure for SNE
+% display('Plotting SNE Result')
+% figure('name','SNE');
+% hold on;
+% for i = 1:length(whichCellTypes)
+%     lb = scoreIndices(i)+1;
+%     ub = scoreIndices(i+1);
+%     if(plotIn3D)
+%         display('plotting 3D');
+%         if(size(score_SNE,2)<3)
+%             display('Cannot plot SNE results in 3D - need more data - Run tSNE with no_dims of >=3');
+%         else
+%             scatter3(score_SNE(lb:ub,1),score_SNE(lb:ub,2),score_SNE(lb:ub,3), 20, colors(i,:));
+%         end
+%     else
+%         % Plot scatter for tSNE
+%         scatter(score_SNE(lb:ub,1),score_SNE(lb:ub,2), 20, colors(i,:));
+%         xlabel('p1');
+%         ylabel('p2');
+%         title(strcat('SNE ',expr_title));
+%     end
+% %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
+% %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
+% %     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
+% end
+% legend(whichCellTypes)
+% hold off;
+% drawnow
+%% 
+
+% % Run tSNE on the data 
+% display('Running t-SNE on data')
+% score_tSNE = tsne(dataStack);
+% %TSNE Performs symmetric t-SNE on dataset X
+% %
+% %   mappedX = tsne(X, labels, no_dims, initial_dims, perplexity)
+% %   mappedX = tsne(X, labels, initial_solution, perplexity)
+
+% % Plot the Figure for t-SNE
+% display('Plotting t-SNE Result')
+% figure('name','t-SNE');
+% hold on;
+% for i = 1:length(whichCellTypes)
+%     lb = scoreIndices(i)+1;
+%     ub = scoreIndices(i+1);
+%     if(plotIn3D)
+%         display('plotting 3D');
+%         if(size(score_tSNE,2)<3)
+%             display('Cannot plot tSNE results in 3D - need more data - Run tSNE with no_dims of >=3');
+%         else
+%             scatter3(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2),score_tSNE(lb:ub,3), 20, colors(i,:));
+%         end
+%     else
+%         % Plot scatter for tSNE
+%         scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
+%         xlabel('p1');
+%         ylabel('p2');
+%         title(strcat('t-SNE ',expr_title));
+%     end
+% %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
+% %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
+% %     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
+% end
+% legend(whichCellTypes)
+% hold off;
+% drawnow
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%% POST-PROCESSING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % Run k-means on UNSUPERVISED data AFTER reduced to 2 or 3 dimensions
+% score_kmeans = kmeans(dataStack,3);
+% size(score_kmeans)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 set(findall(gcf,'type','text'),'fontSize',14,'fontWeight','bold')
 set(gca, 'fontsize', 14, 'linewidth', 2);
 
