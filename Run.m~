@@ -160,7 +160,6 @@ expr_title = sprintf([MarrowRegion space 'data' str_sp newline '<' num2str(numRa
 %%%%%%%%% DIMENSIONAL REDUCTION ALGORITHMS & PLOTTING %%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
 
 % Run PCA on the data
 display('Running PCA on dataset')
@@ -194,7 +193,6 @@ for i = 1:length(whichCellTypes)
 end
 legend(whichCellTypes)
 hold off;
-%% 
 
 % % Run non-classical MDS on the data
 % display ('Running non-classical MDS')
@@ -224,12 +222,10 @@ hold off;
 % end
 % legend(whichCellTypes)
 % hold off;
-%% 
 
 % Run ICA on the data - good for separation
 
 %%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
 
 % Run Isomap Algorithm on Data
 display('Running Isomap on Data');
@@ -271,7 +267,6 @@ hold off;
 
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
-%% 
 
 % % Run SNE on Data 
 % display('Running SNE on Data')
@@ -307,7 +302,6 @@ hold off;
 % end
 % legend(whichCellTypes)
 % hold off;
-%% 
 
 % % Run tSNE on the data 
 % display('Running t-SNE on data')
