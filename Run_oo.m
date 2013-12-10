@@ -89,7 +89,9 @@ end
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PCA %%
 display('Running PCA on Data')
+tic;
 [coeff,score_PCA,latent] = princomp(data_stack);
+PCA_time = toc;
 display('Plotting PCA')
 plotIn3D = false;
 figure('name','PCA'); hold on;
@@ -126,8 +128,9 @@ opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
 display('Running t-SNE (Max Code) on Data');
+tic;
 [tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
-
+tsne_time = toc;
 % Plot results
 display('Plotting t-SNE (Maxs Code)')
 figure('name','t-SNE: Maxs Code'); 
@@ -143,6 +146,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+% Find k-means clusters from reduced data from t-SNE
+[tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
+
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -157,7 +163,9 @@ opts.maxit = 600; opts.runtime = 900; opts.tol = 1e-3;
 opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
+tic;
 [ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
+ssne_time = toc;
 
 % Plot results
 figure('name','s-SNE (Maxs Code)'); hold on;
@@ -171,6 +179,9 @@ end
 legend(whichCellTypes.list)
 hold off;
 drawnow
+
+% Find k-means clusters from reduced data from s-SNE
+[ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
 
 %% EE %%
 % dimensionality reduction to dim = 2
@@ -186,7 +197,9 @@ opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
 opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
+tic;
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
+ee_time = toc;
 
 % Plot results
 figure('name','EE (Maxs Code)'); hold on;
@@ -200,6 +213,10 @@ end
 legend(whichCellTypes.list)
 hold off;
 drawnow
+
+% Find k-means clusters from reduced data from EE
+[ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
+
 %%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,8 +225,10 @@ drawnow
 
 % % Run non-classical MDS on the data
 % display ('Running non-classical MDS')
+% tic;
 % dissimilarities = pdist(zscore(dataStack));
 % [score_ncMDS,stress] = mdscale(dissimilarities,2,'criterion','metricstress');
+% mds_time = toc; 
 % 
 % % Plot the Figure for non-classical MDS
 % display ('Plotting non-classical MDS Result')
@@ -245,7 +264,9 @@ drawnow
 
 % Run Isomap Algorithm on Data
 display('Running Isomap on Data');
+tic;
 [score_isomap, mapping_isomap] = isomap(data_stack);
+isomap_time = toc;
 %ISOMAP Runs the Isomap algorithm
 %
 %   [mappedX, mapping] = isomap(X, no_dims, k); 
@@ -271,8 +292,6 @@ for i = 1:whichCellTypes.length()
     else
         % Plot scatter for Isomap
         scatter(score_isomap(lb:ub,1),score_isomap(lb:ub,2), 20, colors(i,:));
-        xlabel('p1');
-        ylabel('p2');
         title(['Isomap: N/file=' num2str(numRandTrainExPerFile)]);
     end
 end
@@ -280,10 +299,15 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+% Find k-means clusters from reduced data from Isomap
+[isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
+
 %% Locally Linear Embedding
 % Run LLE on Data
 display('Running LLE on the data')
+tic;
 score_LLE = lle(data_stack);
+lle_time = toc;
 %LLE Runs the locally linear embedding algorithm
 %
 %   mappedX = lle(X, no_dims, k, eig_impl)
@@ -308,8 +332,6 @@ for i = 1:whichCellTypes.length()
     else
         % Plot scatter for tSNE
         scatter(score_LLE(lb:ub,1),score_LLE(lb:ub,2), 20, colors(i,:));
-        xlabel('p1');
-        ylabel('p2');
         title(['LLE: N/file=' num2str(numRandTrainExPerFile)]);
     end
 end
@@ -317,13 +339,17 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+% Find k-means clusters from reduced data from Isomap
+[LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
 
 % % Run SNE on Data 
 % display('Running SNE on Data')
+% tic;
 % score_SNE = sne(data_stack);
+% slow_sne_time = toc;
 % %SNE Implementation of Stochastic Neighbor Embedding
 % %
 % %   mappedX = sne(X, no_dims, perplexity)
@@ -345,8 +371,6 @@ drawnow
 %     else
 %         % Plot scatter for tSNE
 %         scatter(score_SNE(lb:ub,1),score_SNE(lb:ub,2), 20, colors(i,:));
-%         xlabel('p1');
-%         ylabel('p2');
 %         title(['SNE: N/file=' num2str(numRandTrainExPerFile)]);
 %     end
 % end
@@ -357,7 +381,9 @@ drawnow
 
 % % Run tSNE on the data 
 % display('Running t-SNE on data')
+% tic;
 % score_tSNE = tsne(data_stack);
+% slow_tsne_time = toc;
 % %TSNE Performs symmetric t-SNE on dataset X
 % %
 % %   mappedX = tsne(X, labels, no_dims, initial_dims, perplexity)
@@ -380,8 +406,6 @@ drawnow
 %     else
 %         % Plot scatter for tSNE
 %         scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
-%         xlabel('p1');
-%         ylabel('p2');
 %         title(['t-SNE: N/file=' num2str(numRandTrainExPerFile)]);
 %     end
 % end

@@ -143,6 +143,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+% Find k-means clusters from reduced data from t-SNE
+[IDX,C,sumd] = kmeans(tsne_output,15);
+
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -189,7 +192,7 @@ opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
 
 % Plot results
-figure(; hold on;
+figure('name','EE (Maxs Code)'); hold on;
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;        
@@ -271,8 +274,6 @@ for i = 1:whichCellTypes.length()
     else
         % Plot scatter for Isomap
         scatter(score_isomap(lb:ub,1),score_isomap(lb:ub,2), 20, colors(i,:));
-        xlabel('p1');
-        ylabel('p2');
         title(['Isomap: N/file=' num2str(numRandTrainExPerFile)]);
     end
 end
@@ -308,8 +309,6 @@ for i = 1:whichCellTypes.length()
     else
         % Plot scatter for tSNE
         scatter(score_LLE(lb:ub,1),score_LLE(lb:ub,2), 20, colors(i,:));
-        xlabel('p1');
-        ylabel('p2');
         title(['LLE: N/file=' num2str(numRandTrainExPerFile)]);
     end
 end
@@ -345,8 +344,6 @@ drawnow
 %     else
 %         % Plot scatter for tSNE
 %         scatter(score_SNE(lb:ub,1),score_SNE(lb:ub,2), 20, colors(i,:));
-%         xlabel('p1');
-%         ylabel('p2');
 %         title(['SNE: N/file=' num2str(numRandTrainExPerFile)]);
 %     end
 % end
@@ -380,8 +377,6 @@ drawnow
 %     else
 %         % Plot scatter for tSNE
 %         scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
-%         xlabel('p1');
-%         ylabel('p2');
 %         title(['t-SNE: N/file=' num2str(numRandTrainExPerFile)]);
 %     end
 % end
