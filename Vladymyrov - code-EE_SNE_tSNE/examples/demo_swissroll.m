@@ -2,8 +2,8 @@
 
 % we fix a random seed for repeatability of the results
 s = RandStream('mcg16807','Seed',29); 
-% RandStream.setGlobalStream(s);
-RandStream.setDefaultStream(s); % MATLAB 2010b
+RandStream.setGlobalStream(s);
+% RandStream.setDefaultStream(s); % MATLAB 2010b
 
 % load swiss roll dataset with 3000 points
 N = 3000;
