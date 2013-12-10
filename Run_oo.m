@@ -37,16 +37,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
 whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
 % whichCellTypes = TCells;
 numRandTrainExPerFile = 200; %seems optimal for tsne 
 hueSensitivity = 2.5;
-=======
-whichCellTypes = Monocytes & pDC & NK; 
-numRandTrainExPerFile = 400; %seems optimal for tsne 
-hueSensitivity = 0.7;
->>>>>>> f9ba221a559a6d844e4a1eabc4ea59e01dd43304
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -149,7 +143,6 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -167,7 +160,7 @@ opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 [ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
 
 % Plot results
-figure; hold on;
+figure('name','s-SNE (Maxs Code)'); hold on;
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;        
@@ -176,6 +169,8 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
+hold off;
+drawnow
 
 %% EE %%
 % dimensionality reduction to dim = 2
@@ -194,7 +189,7 @@ opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
 
 % Plot results
-figure; hold on;
+figure('name','EE (Maxs Code)'); hold on;
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;        
@@ -203,9 +198,9 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-=======
+hold off;
+drawnow
 %%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> f9ba221a559a6d844e4a1eabc4ea59e01dd43304
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
