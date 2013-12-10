@@ -86,7 +86,9 @@ end
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PCA %%
+display('Running PCA on Data')
 [coeff,score_PCA,latent] = princomp(data_stack);
+display('Plotting PCA')
 plotIn3D = false;
 figure('name','PCA'); hold on;
 for i = 1:whichCellTypes.length()
@@ -105,8 +107,46 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+%%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% 
+%% t-SNE (Max's Code) %%
+% dimensionality reduction to dim = 2
+% X is a N by dim vector where N is the original number of data points.
+% see the file alg_tsne for more details
+
+% Want dimensionality reduction to 2
+dim = 2;
+
+% stopping criteria: number of iterations is no more than 100, runtime is
+% no more than 30 seconds, and the relative tolerance in the embedding is 
+% no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
+opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
+opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
+
+% Run algorithm
+display('Running t-SNE (Max Code) on Data');
+[tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
+
+% Plot results
+display('Plotting t-SNE (Maxs Code)')
+figure('name','t-SNE: Maxs Code'); 
+hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;        
+    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
+    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+end
+legend(whichCellTypes.list)
+hold off;
+drawnow
+
+%%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Multidimensional Scaling
 
 % % Run non-classical MDS on the data
 % display ('Running non-classical MDS')
@@ -142,7 +182,8 @@ drawnow
 % Run ICA on the data - good for separation
 
 %%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
+
+%% ISOMAP Algorithm
 
 % Run Isomap Algorithm on Data
 display('Running Isomap on Data');
@@ -181,36 +222,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-%% t-SNE (Max's Code) %%
-% dimensionality reduction to dim = 2
-% X is a N by dim vector where N is the original number of data points.
-% see the file alg_tsne for more details
+%% Locally Linear Embedding
 
-% Want dimensionality reduction to 2
-dim = 2;
 
-% stopping criteria: number of iterations is no more than 100, runtime is
-% no more than 30 seconds, and the relative tolerance in the embedding is 
-% no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
-opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
-opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
-
-% Run algorithm
-[tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
-
-% Plot results
-figure('name','t-SNE: Maxs Code'); 
-hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
-    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
@@ -278,9 +292,6 @@ drawnow
 %         ylabel('p2');
 %         title(['t-SNE: N/file=' num2str(numRandTrainExPerFile)]);
 %     end
-% %     scatter(score((i-1)*400+1:400*i,1),score(i:400*i + 1,2),'filled','b');
-% %     scatter(score((i-1)*400+1:400*i,1),score((i-1)*400+1:400*i,2), c(i),'filled');
-% %     scatter(score(lb:ub,1),score(lb:ub,2), c(i),'filled', 'markersize', 10);
 % end
 % legend(whichCellTypes.list)
 % hold off;
