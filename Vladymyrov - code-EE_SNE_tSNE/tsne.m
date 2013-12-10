@@ -60,7 +60,8 @@ St = S'; Rt = R';
 Xold = opts.X0;
 for i = 1:length(l)
   [e(1), ker] = tsne_error(Xold,Wp,l(i));
-  j = 1; a(1) = 1; t(1) = toc
+  j = 1; a(1) = 1; t(1) = toc;
+  display(['homotopy param index =' num2str(i) ', iter= ' num2str(j) ', time=' num2str(t(j))]);
   convcrit = (opts.maxit>=1) & (t(end)<opts.runtime);
   
   while convcrit
@@ -76,6 +77,7 @@ for i = 1:length(l)
     Xold = X;
     j = j+1;
     t(j) = toc;
+    display(['homotopy param index =' num2str(i) ', iter= ' num2str(j) ', time=' num2str(t(j))]);
   end
   
   % save parameters in an array (for single lambda) or in a cell array (for homotopy)
