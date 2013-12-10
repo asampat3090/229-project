@@ -9,10 +9,21 @@ classdef Set < handle
     
     methods
         function obj = Set(items)
+            if(nargin == 0) % empty set constructor
+                return;
+            end
+            
             if(~iscell(items))
                 items = {items};
             end
             obj.list = items;
+        end
+        
+        % Logical AND of two sets. Merges them
+        function s = and(this, that)
+            s = Set();
+            s.add(this.list);
+            s.add(that.list);
         end
         
         % Returns true if this contains the item

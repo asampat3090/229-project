@@ -60,7 +60,7 @@ St = S'; Rt = R';
 Xold = opts.X0;
 for i = 1:length(l)
   [e(1), ker] = tsne_error(Xold,Wp,l(i));
-  j = 1; a(1) = 1; t(1) = toc;
+  j = 1; a(1) = 1; t(1) = toc
   convcrit = (opts.maxit>=1) & (t(end)<opts.runtime);
   
   while convcrit
