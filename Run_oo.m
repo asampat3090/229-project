@@ -10,14 +10,14 @@ clear all; clc;
 %% %%%%% DATA PRE-PROCESSING %%%%%
 
 % Script Variables
-cell_data_array = []; % array of pointers to all CellData objects created
+cell_data_array_all = []; % array of pointers to all CellData objects created
 
 % Create array of all fcs files as CellData objects
 D=dir;
 fnames = {D.name};
 for i = 1:length(fnames)
     if(CellData.isReadable(fnames{i}))
-        cell_data_array = [cell_data_array, CellData(fnames{i})]; %#ok<AGROW>
+        cell_data_array_all = [cell_data_array_all, CellData(fnames{i})]; %#ok<AGROW>
     end
 end
 
@@ -34,9 +34,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-whichCellTypes = Monocytes & pDC & NK; 
-numRandTrainExPerFile = 400; %seems optimal for tsne 
-hueSensitivity = 2;
+whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
+% whichCellTypes = TCells;
+numRandTrainExPerFile = 200; %seems optimal for tsne 
+hueSensitivity = 2.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -46,13 +47,14 @@ useSurfaceProteinsOnly = true;
 % Keep the CellData objects whose cell_type is contained in the
 % whichCellTypes variable
 removeIndicies = [];
-for i = 1:length(cell_data_array)
-    ct = cell_data_array(i).cell_types; % will be a single string since no CellData objects have seen merger
-    st = cell_data_array(i).cell_stimulation_levels; % also a string
+for i = 1:length(cell_data_array_all)
+    ct = cell_data_array_all(i).cell_types; % will be a single string since no CellData objects have seen merger
+    st = cell_data_array_all(i).cell_stimulation_levels; % also a string
     if(~whichCellTypes.contains(ct) || ~whichStimLevels.contains(st))
         removeIndicies = [removeIndicies, i]; %#ok<AGROW>
     end
 end
+cell_data_array = cell_data_array_all;
 cell_data_array(removeIndicies) = [];
 
 % Create single CellData object out of desired data
@@ -81,7 +83,6 @@ end
 
 %% t-SNE %%
 % dimensionality reduction to dim = 2
-% X is a N by dim vector where N is the original number of data points.
 % see the file alg_tsne for more details
 
 % Want dimensionality reduction to 2
@@ -90,7 +91,7 @@ dim = 2;
 % stopping criteria: number of iterations is no more than 100, runtime is
 % no more than 30 seconds, and the relative tolerance in the embedding is 
 % no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
-opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
+opts.maxit = 400; opts.runtime = 900; opts.tol = 1e-3;
 opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
@@ -107,6 +108,59 @@ for i = 1:whichCellTypes.length()
 end
 legend(whichCellTypes.list)
 
+%% s-SNE %%
+% dimensionality reduction to dim = 2
+% see the file alg_ssne for more details
+
+% Want dimensionality reduction to 2
+dim = 2;
+
+% stopping criteria: number of iterations is no more than 100, runtime is
+% no more than 30 seconds, and the relative tolerance in the embedding is 
+% no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
+opts.maxit = 600; opts.runtime = 900; opts.tol = 1e-3;
+opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
+
+% Run algorithm
+[ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
+
+% Plot results
+figure; hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;        
+    scatter(ssne_output(lb:ub,1),ssne_output(lb:ub,2), 20, colors(i,:));
+    title(['SSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+end
+legend(whichCellTypes.list)
+
+%% EE %%
+% dimensionality reduction to dim = 2
+% see the file alg_ee for more details
+
+% Want dimensionality reduction to 2
+dim = 2;
+
+% stopping criteria: number of iterations is no more than 100, runtime is
+% no more than 30 seconds, and the relative tolerance in the embedding is 
+% no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
+opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
+opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
+
+% Run algorithm
+[ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
+
+% Plot results
+figure; hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;        
+    scatter(ee_output(lb:ub,1),ee_output(lb:ub,2), 20, colors(i,:));
+    title(['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+end
+legend(whichCellTypes.list)
 
 %% PCA %%
 [coeff,score_PCA,latent] = princomp(data_stack);
