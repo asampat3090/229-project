@@ -223,7 +223,41 @@ hold off;
 drawnow
 
 %% Locally Linear Embedding
+% Run LLE on Data
+display('Running LLE on the data')
+score_LLE = lle(data_stack);
+%LLE Runs the locally linear embedding algorithm
+%
+%   mappedX = lle(X, no_dims, k, eig_impl)
 
+% Plot the Figure for LLE
+display('Plotting LLE Result');
+figure('name','LLE');
+hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;
+    if ub>size(score_LLE,1)
+        ub=size(score_LLE,1)
+    end
+    if(plotIn3D)
+        display('plotting 3D');
+        if(size(score_LLE,2)<3)
+            display('Cannot plot SNE results in 3D - need more data - Run tSNE with no_dims of >=3');
+        else
+            scatter3(score_LLE(lb:ub,1),score_LLE(lb:ub,2),score_LLE(lb:ub,3), 20, colors(i,:));
+        end
+    else
+        % Plot scatter for tSNE
+        scatter(score_LLE(lb:ub,1),score_LLE(lb:ub,2), 20, colors(i,:));
+        xlabel('p1');
+        ylabel('p2');
+        title(['LLE: N/file=' num2str(numRandTrainExPerFile)]);
+    end
+end
+legend(whichCellTypes.list)
+hold off;
+drawnow
 
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
@@ -240,9 +274,9 @@ drawnow
 % display('Plotting SNE Result')
 % figure('name','SNE');
 % hold on;
-% for i = 1:length(whichCellTypes)
-%     lb = scoreIndices(i)+1;
-%     ub = scoreIndices(i+1);
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;
 %     if(plotIn3D)
 %         display('plotting 3D');
 %         if(size(score_SNE,2)<3)
@@ -275,9 +309,9 @@ drawnow
 % display('Plotting t-SNE Result')
 % figure('name','t-SNE');
 % hold on;
-% for i = 1:length(whichCellTypes)
-%     lb = scoreIndices(i)+1;
-%     ub = scoreIndices(i+1);
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;
 %     if(plotIn3D)
 %         display('plotting 3D');
 %         if(size(score_tSNE,2)<3)
@@ -298,3 +332,20 @@ drawnow
 % drawnow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%% Classification Algorithms %%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Liner Support Vector Machine
+
+%%%%%%%%%%%%%%%%% TRIAL UNTIL WE GET CANCER DATA %%%%%%%%%%%%%%%%%%%%%%%%
+
+% % Prepare the class labels
+% % First prepare the labels for the healthy cells (label as zero)
+% healthy_cell_labels = zeros(size(data_stack,1),1);
+% % (TBD) Prepare the labels for the cancer cells
+% % cancer_cell_labels
+% % (TBD) Combine the data and the labels for healthy + cancer cells & randomize
+% 
+% % Run the algorithm on the data
+% SVMStruct = svmtrain(data_stack,healthy_cell_labels);
