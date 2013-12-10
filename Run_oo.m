@@ -111,6 +111,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+% Find k-means clusters from reduced data from PCA
+[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
+
 %%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% t-SNE (Max's Code) %%
