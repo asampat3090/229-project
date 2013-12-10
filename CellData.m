@@ -91,7 +91,12 @@ classdef CellData < handle
         % the integer array data_subset_indicies_for_merged_data contains
         % indices to the row indices that denote the change from one
         % parents data to the next. The last entry = size(child.data,1)+1;
-        function obj = merge(pointer_array)       
+        % 
+        % if numRandDataPts is nonempty, then upon merging, numRandDataPts
+        % random data points are taken from each CellData object's data for merging. if
+        % nnumRandDataPts > size(data,1) for any object, all the data is
+        % used
+        function obj = merge(pointer_array, numRandDataPts)       
             
             % Check the objects in the pointer_array are column_heading
             % compatible
@@ -104,12 +109,18 @@ classdef CellData < handle
             obj.column_headings = pointer_array(1).column_headings;  
             for i = 1:length(pointer_array)
                 % Update data, stimulation level, and cell type
-                obj.addData( pointer_array(i).data );                
+                ad = pointer_array(i).data;
+                if(nargin == 2)
+                    r = randperm(size(ad,1));
+                    r = r(1:min(numRandDataPts, size(ad,1)));
+                    ad = ad(r,:);
+                end
+                obj.addData( ad );                
                 obj.addStimLevel( pointer_array(i).cell_stimulation_levels );
                 obj.addCellType( pointer_array(i).cell_types );
                 
                 % Update data indicies
-                m = size(pointer_array(i).data, 1);
+                m = size(ad, 1);
                 temp = obj.data_subset_indicies_for_merged_data;
                 obj.data_subset_indicies_for_merged_data = [temp, temp(end) + m];
             end
@@ -150,9 +161,7 @@ classdef CellData < handle
                 [str, rem] = strtok(rem, '_');         %#ok<STTOK>
             end
             this.cell_types = {str};
-        end
-              
-       
+        end                     
         
         % ADD DATA %
         % Adds the [m x n] matrix new_data to the data field of 'this'. 
@@ -182,7 +191,14 @@ classdef CellData < handle
         % GET SURFACE PROTEINS DATA %
         % returns a matrix of values corresponding to the surface protein
         % data only
-        function matrix = getSurfaceProteinData(this)
+        % numRandDataPts is an optional parameter which forces the function
+        % to return a numRandDataPts x n subset of the data, where n is the
+        % number of surface proteins. The subset is taken at random.
+        % if numRandDataPts > size(data,1), this function returns the
+        % entire data set
+        function matrix = getSurfaceProteinData(this, numRandDataPts)
+            
+            % Get surface protein data
             proteinNames = this.column_headings;
             surfaceProteinIndices = [];
             for k = 1:length(proteinNames)
@@ -190,8 +206,30 @@ classdef CellData < handle
                     surfaceProteinIndices = [surfaceProteinIndices k]; %#ok<AGROW>
                 end
             end
-            matrix = this.data(:, surfaceProteinIndices);            
+            matrix = this.data(:, surfaceProteinIndices);    
+            
+            % Return data subset as specified by numRandDataPts
+            if(nargin == 2)
+                r = randperm(size(this.data,1));
+                r = r(1:min(numRandDataPts, size(matrix,1)));
+                matrix = matrix(r,:);
+            end
         end
+        
+        % GET ALL DATA %
+        % returns the matrix of all the data
+        % optional parameter numRandDataPts allows for data subset
+        % selection 
+        function matrix = getProteinData(this, numRandDataPts)
+            matrix = this.data;
+            if(nargin == 2)
+                r = randperm(size(this.data,1));
+                r = r(1:min(numRandDataPts, size(matrix,1)));
+                matrix = matrix(r,:);
+            end
+        end
+
+        
     end
     
 end

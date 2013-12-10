@@ -7,6 +7,22 @@
 % Formalize this as the control script
 clear all; clc;
 
+%% %%%%% DATA PRE-PROCESSING %%%%%
+
+% Script Variables
+cell_data_array = []; % array of pointers to all CellData objects created
+
+% Create array of all fcs files as CellData objects
+D=dir;
+fnames = {D.name};
+for i = 1:length(fnames)
+    if(CellData.isReadable(fnames{i}))
+        cell_data_array = [cell_data_array, CellData(fnames{i})]; %#ok<AGROW>
+    end
+end
+
+%% DATA PROCESSING
+
 %%%%% VARIABLE INITIALIZATION %%%%%
 
 % Cell Categories - definitions per the biologists
@@ -18,26 +34,14 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-whichCellTypes = Monocytes; 
-numRandTrainExPerFile = 800; 
-plotIn3D = false;
-hueSensitivity = .75;
+whichCellTypes = Monocytes & pDC & NK; 
+numRandTrainExPerFile = 400; %seems optimal for tsne 
+hueSensitivity = 2;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
-% Script Variables
-cell_data_array = []; % array of pointers to all CellData objects created 
 
 %%%%% DATA PARSING %%%%%
-
-% Create array of all fcs files as CellData objects
-D=dir;
-fnames = {D.name};
-for i = 1:length(fnames)
-    if(CellData.isReadable(fnames{i}))
-        cell_data_array = [cell_data_array, CellData(fnames{i})]; %#ok<AGROW>
-    end
-end
 
 % Keep the CellData objects whose cell_type is contained in the
 % whichCellTypes variable
@@ -52,13 +56,13 @@ end
 cell_data_array(removeIndicies) = [];
 
 % Create single CellData object out of desired data
-DesiredCells = CellData.merge(cell_data_array);
+DesiredCells = CellData.merge(cell_data_array, numRandTrainExPerFile);
 
 % Obtain data matrix and pre-process with arcsinh
 if(useSurfaceProteinsOnly)
     data_stack = DesiredCells.getSurfaceProteinData();
 else
-    data_stack = DesiredCells.data;
+    data_stack = DesiredCells.getProteinData();
 end
 data_stack = asinh(data_stack/5);
 
@@ -75,14 +79,39 @@ end
 
 %%%%% ALGORITHM SELECTION %%%%%
 
-% Run PCA on the data
+%% t-SNE %%
+% dimensionality reduction to dim = 2
+% X is a N by dim vector where N is the original number of data points.
+% see the file alg_tsne for more details
+
+% Want dimensionality reduction to 2
+dim = 2;
+
+% stopping criteria: number of iterations is no more than 100, runtime is
+% no more than 30 seconds, and the relative tolerance in the embedding is 
+% no less than 1e-3. Taken from Max's tsne example demo_swissroll.m
+opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
+opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
+
+% Run algorithm
+[tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
+
+% Plot results
+figure; hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;        
+    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
+    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+end
+legend(whichCellTypes.list)
+
+
+%% PCA %%
 [coeff,score_PCA,latent] = princomp(data_stack);
-
-
-%%%%% DATA PLOTTING %%%%%
-
-figure;
-hold on;
+plotIn3D = false;
+figure; hold on;
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;
@@ -93,7 +122,7 @@ for i = 1:whichCellTypes.length()
         % Plot scatter for PCA
 %         subplot(1,2,1);
         scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
-        title('PCA')
+        title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
         
 %         % Plot scatter for tSNE
 %         subplot(1,2,2);

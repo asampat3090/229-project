@@ -21,8 +21,8 @@ Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 whichCellTypes = Monocytes; 
 numRandTrainExPerFile = 800; 
 plotIn3D = false;
-hueSensitivity = 5;
-cell_stimulation_level = 'Basal'; % Either 'Basal' or 'PV04'
+hueSensitivity = .75;
+whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
 % Script Variables
@@ -44,7 +44,8 @@ end
 removeIndicies = [];
 for i = 1:length(cell_data_array)
     ct = cell_data_array(i).cell_types; % will be a single string since no CellData objects have seen merger
-    if(~whichCellTypes.contains(ct))
+    st = cell_data_array(i).cell_stimulation_levels; % also a string
+    if(~whichCellTypes.contains(ct) || ~whichStimLevels.contains(st))
         removeIndicies = [removeIndicies, i]; %#ok<AGROW>
     end
 end
@@ -68,10 +69,33 @@ chunk_indices = DesiredCells.data_subset_indicies_for_merged_data;
 % Get colors - may change for different algorithms
 colors = zeros(length(whichCellTypes), 3); % RGB for every cell subtype
 for j = 1:whichCellTypes.length()
-    colors(j,:) = CellSubtype2Hue(wc, hueSensitivity);
+    colors(j,:) = CellSubtype2Hue(whichCellTypes.list{j}, hueSensitivity);
 end
 
+
 %%%%% ALGORITHM SELECTION %%%%%
+
+%% t-SNE %
+% dimensionality reduction to dim = 2
+% X is a N by dim vector where N is the original number of data points.
+% see the file alg_tsne for more details
+[tsne_output, E, A, T] = alg_tsne(data_stack);
+figure; hold on;
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;        
+    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
+    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+       ', t=' num2str(T(end))]);   
+end
+legend(whichCellTypes.list)
+
+
+% % Example plotting for SNE
+% figure(4); scatter(X(:,1),X(:,2),24,t);
+% box on; daspect([1 1 1]);
+% title(['iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+%        ', t=' num2str(T(end))]);
 
 % Run PCA on the data
 [coeff,score_PCA,latent] = princomp(data_stack);
@@ -82,21 +106,21 @@ end
 figure;
 hold on;
 for i = 1:whichCellTypes.length()
-    lb = scoreIndices(i)+1;
-    ub = scoreIndices(i+1);
+    lb = chunk_indices(i);
+    ub = chunk_indices(i+1)-1;
     if(plotIn3D)
         display('plotting 3D');
         scatter3(score_PCA(lb:ub,1),score_PCA(lb:ub,2),score_PCA(lb:ub,3), 20, colors(i,:));
     else
         % Plot scatter for PCA
-        subplot(1,2,1);
+%         subplot(1,2,1);
         scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
         title('PCA')
         
-        % Plot scatter for tSNE
-        subplot(1,2,2);
-        scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
-        title('t-SNE')
+%         % Plot scatter for tSNE
+%         subplot(1,2,2);
+%         scatter(score_tSNE(lb:ub,1),score_tSNE(lb:ub,2), 20, colors(i,:));
+%         title('t-SNE')
     end
 end
-legend(whichCellTypes)
+legend(whichCellTypes.list)
