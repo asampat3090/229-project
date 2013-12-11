@@ -30,10 +30,19 @@ classdef CellData < handle
         fcs_ext = '.fcs';
         possible_stimulation_levels = {'Basal', 'PVO4'}; 
         surface_protein_tag = 'CD'; % case sensitive
-    end
+        possible_cell_types = {'HSC', 'MPP', 'CMP', 'GMP', 'MEP', ... % Stem Cells
+            'Plasma cell', 'Pre-B I', 'Pre-B II', 'Immature B', 'Mature CD38lo B', 'Mature CD38mid B', ... % B Cells
+            'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T',...  % T Cells
+            'NK',... % NK Cells
+            'Plasmacytoid DC', ... % Plasmacytoid DC
+            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte', % Monocytes            
+        };        
+    end   
+
     
     properties
-        data = []; % [m x n] matrix read from the .fcs file        
+        data = []; % [m x n] matrix read from the .fcs file    
+        data_celltype_indices = []; % m x 1 vector of indices to possible_cell_types
         column_headings = {}; % string of the names of the columns
         cell_stimulation_levels = {}; % Basal, PV04
         cell_types = {}; % HSC, GMP, MPP, Mature CD38mid B, etc.
@@ -46,6 +55,7 @@ classdef CellData < handle
     properties(Access = private)
         protein_column_index = 3; % the fcs data has columns 3:end as protein data, the first two columns are Time and Cell Length
         header = {}; % data struct as read in by the reader
+        cell_types_added = {}; % Equivalent to cell_types but not in 'Set' format - allows for repeats for bookkeeping what chunks of data were added from what source
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,6 +80,15 @@ classdef CellData < handle
                 tf = false;
                 return
             end            
+        end
+        
+        % INDEX OF CELL TYPE %
+        % the cell types are in a matlab-cell.
+        % this function returns the index of a particular type
+        % relative to the Constant possible_cell_types variable
+        function idx = indexOfCellType(str_ct)            
+            strpos = strcmpi(CellData.possible_cell_types, str_ct);
+            idx = find(strpos == 1);
         end
         
         % MERGE %
@@ -110,10 +129,12 @@ classdef CellData < handle
             for i = 1:length(pointer_array)
                 % Update data, stimulation level, and cell type
                 ad = pointer_array(i).data;
+                ad_labels = pointer_array(i).data_celltype_indices;
                 if(nargin == 2)
                     r = randperm(size(ad,1));
                     r = r(1:min(numRandDataPts, size(ad,1)));
                     ad = ad(r,:);
+                    ad_labels = ad_labels(r);
                 end
                 obj.addData( ad );                
                 obj.addStimLevel( pointer_array(i).cell_stimulation_levels );
@@ -123,6 +144,11 @@ classdef CellData < handle
                 m = size(ad, 1);
                 temp = obj.data_subset_indicies_for_merged_data;
                 obj.data_subset_indicies_for_merged_data = [temp, temp(end) + m];
+                
+                % Update cell labels
+                lb = obj.data_subset_indicies_for_merged_data(i);
+                ub = obj.data_subset_indicies_for_merged_data(i+1)-1;
+                obj.data_celltype_indices(lb:ub) = ad_labels;
             end
         end
     end
@@ -161,6 +187,9 @@ classdef CellData < handle
                 [str, rem] = strtok(rem, '_');         %#ok<STTOK>
             end
             this.cell_types = {str};
+            
+            % Create label vector
+            this.data_celltype_indices(1:size(this.data,1)) = CellData.indexOfCellType(str);
         end                     
         
         % ADD DATA %
@@ -228,6 +257,8 @@ classdef CellData < handle
                 matrix = matrix(r,:);
             end
         end
+        
+
 
         
     end

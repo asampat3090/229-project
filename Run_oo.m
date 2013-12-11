@@ -37,17 +37,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
-whichCellTypes = Monocytes & pDC & NK; 
+whichCellTypes = Monocytes & BCells & TCells & pDC; 
 % whichCellTypes = TCells & BCells;
 numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
-hueSensitivity = .75;
-=======
-whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
-% whichCellTypes = TCells;
-numRandTrainExPerFile = 200; %seems optimal for tsne 
-hueSensitivity = 2.5;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
+hueSensitivity = 1.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -99,7 +92,41 @@ display('Running PCA on Data')
 tic;
 [coeff,score_PCA,latent] = princomp(data_stack);
 PCA_time = toc;
-display('Plotting PCA')
+
+
+% CLUSTERING METRIC BASED ON AVERAGING
+metric_data = score_PCA(:,1:2);
+
+%Initialize centroids in 2D
+dim = 2;
+mu = zeros(whichCellTypes.length(), dim); 
+for i = 1:whichCellTypes.length()
+    lb = chunk_indices(i); ub = chunk_indices(i+1)-1;
+    data_chunk = metric_data(lb:ub,:);
+    mu(i,:) = sum(data_chunk,1) ./ size(data_chunk,1);
+end
+
+% % rewrite initialization better! so that there are 20 mu's
+% for i = 1:length(CellData.possible_cell_types)
+%     lb = chunk_indices(i); ub = chunk_indices(i+1)-1;
+%     data_chunk = metric_data(lb:ub,:);
+%     mu(i,:) = sum(data_chunk,1) ./ size(data_chunk,1);
+% end
+
+% Generate New Labels that reference the CellData.possible_cell_types list
+data_distances = pdist2(metric_data, mu, 'euclidean'); % matrix of distance: (i,j) is distance from metric_data(i,:) to mu(j,:)
+[blah new_labels] = min(data_distances');
+for i = 1:length(new_labels)
+    temp = whichCellTypes.list{new_labels(i)};
+    new_labels(i) = CellData.indexOfCellType(temp);
+end
+
+% Compare to Actual Labels
+actual_labels = DesiredCells.data_celltype_indices;
+err = sum(actual_labels ~= new_labels)/length(actual_labels);
+
+% PLOT - True Labels
+display('Plotting PCA - True Labels')
 plotIn3D = false;
 figure('name','PCA'); hold on;
 for i = 1:whichCellTypes.length()
@@ -111,12 +138,32 @@ for i = 1:whichCellTypes.length()
     else
         % Plot scatter for PCA
         scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
-        title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
     end
 end
+title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
+
 legend(whichCellTypes.list)
 hold off;
 drawnow
+
+% % PLOT - New Labels - this is all weird
+% display('Plotting PCA - New Labels')
+% plotIn3D = false;
+% figure('name','PCA'); hold on;
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;
+%     for j = lb:ub
+%         % Plot scatter for PCA
+%         new_label_name = CellData.possible_cell_types(new_labels(j));        
+%         rgb = CellSubtype2Hue(new_label_name, hueSensitivity);
+%         scatter(score_PCA(j,1),score_PCA(j,2), 20, rgb);
+%     end
+% end
+% title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
+% legend(whichCellTypes.list)
+% hold off;
+% drawnow
 
 % Find k-means clusters from reduced data from PCA
 %[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
@@ -159,12 +206,10 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
-=======
+
 % Find k-means clusters from reduced data from t-SNE
 [tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
 
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -227,7 +272,6 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-<<<<<<< HEAD
 
 %% Merge select figures into 1 with subplots
 
@@ -255,7 +299,6 @@ for i = 1:length(figHandles)
 end
 
 %% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-=======
 hold off;
 drawnow
 
@@ -263,7 +306,6 @@ drawnow
 [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
 
 %%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
