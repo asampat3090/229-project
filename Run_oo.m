@@ -37,17 +37,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
-whichCellTypes = Monocytes & pDC & NK; 
+whichCellTypes = Monocytes & pDC & TCells & BCells; 
 % whichCellTypes = TCells & BCells;
 numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
-hueSensitivity = .75;
-=======
-whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
-% whichCellTypes = TCells;
-numRandTrainExPerFile = 200; %seems optimal for tsne 
 hueSensitivity = 2.5;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -159,12 +152,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
-=======
 % Find k-means clusters from reduced data from t-SNE
 [tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
 
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -227,35 +217,33 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-<<<<<<< HEAD
 
 %% Merge select figures into 1 with subplots
 
-% Find figures
-figHandles_all = findobj('Type','figure'); % Get all
-figHandles = [1 2]; % indexes to figure numbers
-nrows = 1;
-ncols = 2;
+% % Find figures
+% figHandles_all = findobj('Type','figure'); % Get all
+% figHandles = [1 2]; % indexes to figure numbers
+% nrows = 1;
+% ncols = 2;
+% 
+% % Get subplot positions
+% nfindex = max(figHandles_all) + 1;
+% figure(nfindex); % Create new figure
+% sppos = []
+% for i = 1:length(figHandles)
+%     sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+% end
+% 
+% % Copy figures into subplots of new figure
+% new_splots = {};
+% for i = 1:length(figHandles)
+%     new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+% end
+% for i = 1:length(figHandles)
+%     set(new_splots{i}, 'pos', sppos(i,:));
+% end
+%%
 
-% Get subplot positions
-nfindex = max(figHandles_all) + 1;
-figure(nfindex); % Create new figure
-sppos = []
-for i = 1:length(figHandles)
-    sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
-end
-
-% Copy figures into subplots of new figure
-new_splots = {};
-for i = 1:length(figHandles)
-    new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
-end
-for i = 1:length(figHandles)
-    set(new_splots{i}, 'pos', sppos(i,:));
-end
-
-%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-=======
 hold off;
 drawnow
 
@@ -263,7 +251,6 @@ drawnow
 [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
 
 %%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
