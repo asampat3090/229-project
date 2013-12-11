@@ -112,7 +112,10 @@ hold off;
 drawnow
 
 % Find k-means clusters from reduced data from PCA
-[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
+%[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
+
+% Calculate the average of each label to find a centroid for each.
+
 
 %%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
