@@ -39,7 +39,7 @@ Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 % User Variables
 whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
 % whichCellTypes = TCells;
-numRandTrainExPerFile = 200; %seems optimal for tsne 
+numRandTrainExPerFile = 400; %seems optimal for tsne 
 hueSensitivity = 2.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
