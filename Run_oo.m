@@ -12,7 +12,7 @@ addpath(genpath(currentFolder));
 
 %% %%%%% DATA PRE-PROCESSING %%%%%
 
-% Script Variables
+% Script Variables 
 cell_data_array_all = []; % array of pointers to all CellData objects created
 
 % Create array of all fcs files as CellData objects
@@ -220,10 +220,36 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
+
 % Find k-means clusters from reduced data from EE
 [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
 
-%%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Merge select figures into 1 with subplots
+
+% Find figures
+figHandles_all = findobj('Type','figure'); % Get all
+figHandles = [1 2]; % indexes to figure numbers
+nrows = 1;
+ncols = 2;
+
+% Get subplot positions
+nfindex = max(figHandles_all) + 1;
+figure(nfindex); % Create new figure
+sppos = []
+for i = 1:length(figHandles)
+    sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+end
+
+% Copy figures into subplots of new figure
+new_splots = {};
+for i = 1:length(figHandles)
+    new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+end
+for i = 1:length(figHandles)
+    set(new_splots{i}, 'pos', sppos(i,:));
+end
+
+%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
