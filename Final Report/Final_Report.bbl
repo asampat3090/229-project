@@ -1,0 +1,25 @@
+\begin{thebibliography}{2}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bendall et~al.(2011)Bendall, Simonds, Qiu, Amir, Krutzik, Finck,
+  Bruggner, Melamed, Trejo, Ornatsky, Balderas, Plevritis, Sachs, Pe'er,
+  Tanner, and Nolan]{Bendall:2011bm}
+Bendall, S~C, Simonds, E~F, Qiu, P, Amir, E a~D, Krutzik, P~O, Finck, R,
+  Bruggner, R~V, Melamed, R, Trejo, A, Ornatsky, O~I, Balderas, R~S, Plevritis,
+  S~K, Sachs, K, Pe'er, D, Tanner, S~D, and Nolan, G~P.
+\newblock {Single-Cell Mass Cytometry of Differential Immune and Drug Responses
+  Across a Human Hematopoietic Continuum}.
+\newblock \emph{Science}, 332\penalty0 (6030):\penalty0 687--696, May 2011.
+
+\bibitem[Crammer \& Singer(2002)Crammer and Singer]{Crammer:2002uy}
+Crammer, Koby and Singer, Yoram.
+\newblock {On the algorithmic implementation of multiclass kernel-based vector
+  machines}.
+\newblock \emph{The Journal of Machine Learning Research}, 2:\penalty0
+  265--292, March 2002.
+
+\end{thebibliography}

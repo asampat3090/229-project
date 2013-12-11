@@ -12,7 +12,7 @@ addpath(genpath(currentFolder));
 
 %% %%%%% DATA PRE-PROCESSING %%%%%
 
-% Script Variables
+% Script Variables 
 cell_data_array_all = []; % array of pointers to all CellData objects created
 
 % Create array of all fcs files as CellData objects
@@ -37,16 +37,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
-whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
-% whichCellTypes = TCells;
-numRandTrainExPerFile = 200; %seems optimal for tsne 
-hueSensitivity = 2.5;
-=======
 whichCellTypes = Monocytes & pDC & NK; 
-numRandTrainExPerFile = 400; %seems optimal for tsne 
-hueSensitivity = 0.7;
->>>>>>> f9ba221a559a6d844e4a1eabc4ea59e01dd43304
+% whichCellTypes = TCells & BCells;
+numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
+hueSensitivity = .75;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -149,7 +143,6 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -203,9 +196,33 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-=======
-%%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> f9ba221a559a6d844e4a1eabc4ea59e01dd43304
+
+%% Merge select figures into 1 with subplots
+
+% Find figures
+figHandles_all = findobj('Type','figure'); % Get all
+figHandles = [1 2]; % indexes to figure numbers
+nrows = 1;
+ncols = 2;
+
+% Get subplot positions
+nfindex = max(figHandles_all) + 1;
+figure(nfindex); % Create new figure
+sppos = []
+for i = 1:length(figHandles)
+    sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+end
+
+% Copy figures into subplots of new figure
+new_splots = {};
+for i = 1:length(figHandles)
+    new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+end
+for i = 1:length(figHandles)
+    set(new_splots{i}, 'pos', sppos(i,:));
+end
+
+%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
