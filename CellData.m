@@ -9,6 +9,11 @@
 %                       functions are initially lower case, but if they are
 %                       the union of multiple words, then the 2nd+ words
 %                       are capitalized
+%   absolute labels refers to integers referencing all possible cell types
+%   relative labels refer to integers referencing only existing cell types
+%   in a CellData object
+%   true labeling referes to actual gated information
+%   new labeling is usually the result of an algorithm re-labeling data
 %
 % FCS file data format
 %   contains a large matrix where rows correspond to individual cells and
@@ -18,6 +23,7 @@
 %
 %   contains a header struct, which labels the columns of the matrix as
 %   well as contains data like the name of the cell type
+
 
 classdef CellData < handle
     
@@ -36,7 +42,9 @@ classdef CellData < handle
             'NK',... % NK Cells
             'Plasmacytoid DC', ... % Plasmacytoid DC
             'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte', % Monocytes            
-        };        
+        };      
+        minRGB = [0 0 0]; % make sure the sum of these elements is less than maxRGB(3)
+        maxRGB = [0.9 0.9 0.9];        
     end   
 
     
@@ -45,11 +53,13 @@ classdef CellData < handle
         data_celltype_indices = []; % m x 1 vector of indices to possible_cell_types
         column_headings = {}; % string of the names of the columns
         cell_stimulation_levels = {}; % Basal, PV04
-        cell_types = {}; % HSC, GMP, MPP, Mature CD38mid B, etc.
+        cell_types = {}; % HSC, GMP, MPP, Mature CD38mid B, etc.        
     end
     
     properties(SetAccess = private)
         data_subset_indicies_for_merged_data = [1]; % if obj formed under merging, it contains row indices to the points at which the data changes from one CellData parent to the nex
+        colors_absolute = []; % Color relative to all cell types (same for all objects)
+        colors_relative = []; % Color relative only to cell types in this CellData obj
     end
     
     properties(Access = private)
@@ -82,13 +92,28 @@ classdef CellData < handle
             end            
         end
         
-        % INDEX OF CELL TYPE %
+        % ABSOLUTE INDEX OF CELL TYPE %
         % the cell types are in a matlab-cell.
         % this function returns the index of a particular type
         % relative to the Constant possible_cell_types variable
-        function idx = indexOfCellType(str_ct)            
+        function idx = AbsoluteIndexOfCellType(str_ct)            
             strpos = strcmpi(CellData.possible_cell_types, str_ct);
             idx = find(strpos == 1);
+        end
+        
+        % CELL TYPE TO ABSOLUTE RGB %
+        % arg can be an int or string, references the 
+        % CellData.possible_cell_types struct
+        % returns the absolute color of a particular type
+        function rgb = cellTypeToAbsoluteRGB(arg)
+            if(isnumeric(arg))
+                rgb = CellData.colors_absolute(arg);
+            elseif(ischar(arg))
+                idx = CellData.AbsoluteIndexOfCellType(arg);
+                rgb = this.colors_absolute(idx);
+            else
+                error('CellData.cellTypeToRGB: arg must be an integer or string')
+            end
         end
         
         % MERGE %
@@ -117,9 +142,16 @@ classdef CellData < handle
         % used
         function obj = merge(pointer_array, numRandDataPts)       
             
+%             % If pointer_array 
+%             if(length(pointer_array) == 1)
+%                 obj = pointer_array(1).shallowCopy();
+%                 return;
+%             end
+            
             % Check the objects in the pointer_array are column_heading
             % compatible
-            if(~isequal(pointer_array.column_headings))
+            
+            if((length(pointer_array) ~= 1) && ~isequal(pointer_array.column_headings))
                 error('pointers being merged must have identical column headers');
             end
             
@@ -150,6 +182,9 @@ classdef CellData < handle
                 ub = obj.data_subset_indicies_for_merged_data(i+1)-1;
                 obj.data_celltype_indices(lb:ub) = ad_labels;
             end
+            
+            % Set new colors 
+            obj.setColors();
         end
     end
     
@@ -189,8 +224,141 @@ classdef CellData < handle
             this.cell_types = {str};
             
             % Create label vector
-            this.data_celltype_indices(1:size(this.data,1)) = CellData.indexOfCellType(str);
-        end                     
+            this.data_celltype_indices(1:size(this.data,1)) = CellData.AbsoluteIndexOfCellType(str);
+            
+            % Set the colors
+            this.setColors();
+        end
+        
+        % Shallow Copy - the CellData objects do not store pointers
+        % so this is equivalent to a deep copy
+        function obj = shallowCopy(this)
+            obj = CellData();
+            
+            % Shallow copy
+            obj.data = this.data;
+            obj.data_celltype_indices = this.data_celltype_indices;
+            obj.column_headings = this.column_headings;
+            obj.cell_stimulation_levels = this.cell_stimulation_levels;
+            obj.cell_types = this.cell_types;
+            obj.data_subset_indicies_for_merged_data = this.data_subset_indicies_for_merged_data;  
+            obj.colors_absolute = this.colors_absolute ; 
+            obj.colors_relative = this.colors_relative ; 
+            obj.protein_column_index = this.protein_column_index ; 
+            obj.header = this.header ; 
+            obj.cell_types_added = this.cell_types_added ;                 
+        end
+        % RELAIVE INDEX OF CELL TYPE %
+        % the cell types are in a matlab-cell.
+        % this function returns the index of a particular type
+        % relative to the cell_types variable
+        function idx = RelativeIndexOfCellType(this, str_ct)            
+            strpos = strcmpi(this.cell_types, str_ct);
+            idx = find(strpos == 1);
+        end       
+        
+        % Sets the absolute and relative colors
+        function setColors(this)
+            % Conversion factor for working with integers instead of
+            % decimals
+            precision = 1000;
+            
+            % Set absolute colors
+            cell_names = CellData.possible_cell_types;
+            
+            % Create vector that spans from min to max rgb with equal
+            % spacing given by the # of cell types
+            mn = precision * (CellData.minRGB);
+            mx = precision * (CellData.maxRGB);
+            step = (sum(mx)-sum(mn))/length(cell_names);
+            
+            % Convert vals to RBB
+            vals = sum(mn):step:sum(mx);
+            for i = 1:length(cell_names)
+                rgb = [ 0 0 0 ];
+                v = vals(i);
+                
+                % Set RGB individually
+                for j = 1:length(rgb)
+                    if((v - mx(j)) < 0)
+                        rgb(j) = v;
+                    else
+                        rgb(j) = mx(j);
+                    end
+                    v = max(v - mx(j),0);
+                end
+                rgb = rgb/precision;
+
+                this.colors_absolute(i,1:3) = rgb;
+            end
+            
+            % Set relative colors
+            cell_names = this.cell_types;
+            
+            % Create vector that spans from min to max rgb with equal
+            % spacing given by the # of cell types
+            mn = precision * (CellData.minRGB);
+            mx = precision * (CellData.maxRGB);
+            step = (sum(mx)-sum(mn))/length(cell_names);
+            
+            % Convert vals to RBB
+            vals = sum(mn):step:sum(mx);
+            for i = 1:length(cell_names)
+                rgb = [ 0 0 0 ];
+                v = vals(i);
+                
+                % Set RGB individually
+                for j = 1:length(rgb)
+                    if((v - mx(j)) < 0)
+                        rgb(j) = v;
+                    else
+                        rgb(j) = mx(j);
+                    end
+                    v = max(v - mx(j),0);
+                end
+                rgb = rgb/precision;
+
+                this.colors_relative(i,1:3) = rgb;
+            end
+        end
+        
+        % GET RELATIVE COLORS BY ABSOLUTE LABELS %
+        % Returns the relative coloring of the object's data based on an
+        % absolute labeling (integers) in new_labels
+        % if new_labels is empty it returns the colors of the actual
+        % labelling
+        function colors = getRelativeColorsByAbsoluteLabels(this, new_labels)
+            if(nargin == 1)
+                colors = this.colors_relative;
+                return;
+            end
+            
+            colors = zeros(length(new_labels), 3);
+            for i = 1:length(new_labels)
+                ct = CellData.possible_cell_types{new_labels(i)};
+                r_idx = this.RelativeIndexOfCellType(ct);
+                rgb = this.colors_relative(r_idx,:);
+                colors(i,1:3) = rgb;
+            end
+            
+        end
+        
+        % CELL TYPE TO RELATIVE RGB %
+        % arg can be an int or string, references the 
+        % CellData.cell_types struct
+        % returns the relative color of a particular type
+        function rgb = cellTypeToRelativeRGB(this, arg)
+            if(isnumeric(arg))
+                rgb = this.colors_relative(arg);
+            elseif(ischar(arg))
+                idx = this.RelativeIndexOfCellType(arg);
+                rgb = this.colors_relative(idx);
+            else
+                error('CellData.obj.cellTypeToRGB: arg must be an integer or string')
+            end
+        end
+        
+        
         
         % ADD DATA %
         % Adds the [m x n] matrix new_data to the data field of 'this'. 

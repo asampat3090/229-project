@@ -37,14 +37,11 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
-whichCellTypes = Monocytes & pDC & NK; 
-=======
-whichCellTypes = Monocytes & pDC & TCells & BCells; 
->>>>>>> a490702ba5d23f0bd4dede2e71367982a06d6d5f
-% whichCellTypes = TCells & BCells;
+% whichCellTypes = Monocytes;
+whichCellTypes = pDC & NK & Monocytes;
+% whichCellTypes = NK;
 numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
-hueSensitivity = .75;
+hueSensitivity = 1.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -79,11 +76,8 @@ data_stack = asinh(data_stack/5);
 % child object DesiredCells. Used for plotting
 chunk_indices = DesiredCells.data_subset_indicies_for_merged_data;
 
-% Get colors - may change for different algorithms
-colors = zeros(length(whichCellTypes), 3); % RGB for every cell subtype
-for j = 1:whichCellTypes.length()
-    colors(j,:) = CellSubtype2Hue(whichCellTypes.list{j}, hueSensitivity);
-end
+% Color of data
+colors= DesiredCells.getRelativeColorsByAbsoluteLabels(); % no argument returns colors based on the original labeling of the data
 
 
 %%%%% ALGORITHM SELECTION %%%%%
@@ -92,87 +86,26 @@ end
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PCA %%
+
+%Run Algorithm
 display('Running PCA on Data')
 tic;
 [coeff,score_PCA,latent] = princomp(data_stack);
 PCA_time = toc;
-<<<<<<< HEAD
 
+% User alters these variables
+processed_data = score_PCA;
+figName = 'PCA';
+plot_title = ['PCA: N/file=' num2str(numRandTrainExPerFile)];
 
 % CLUSTERING METRIC BASED ON AVERAGING
-metric_data = score_PCA(:,1:2);
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+label_err
 
-%Initialize centroids in 2D
-dim = 2;
-mu = zeros(whichCellTypes.length(), dim); 
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i); ub = chunk_indices(i+1)-1;
-    data_chunk = metric_data(lb:ub,:);
-    mu(i,:) = sum(data_chunk,1) ./ size(data_chunk,1);
-end
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
-% Generate New Labels that reference the CellData.possible_cell_types list
-data_distances = pdist2(metric_data, mu, 'euclidean'); % matrix of distance: (i,j) is distance from metric_data(i,:) to mu(j,:)
-[blah new_labels] = min(data_distances');
-for i = 1:length(new_labels)
-    temp = whichCellTypes.list{new_labels(i)};
-    new_labels(i) = CellData.indexOfCellType(temp);
-end
-
-% Compare to Actual Labels
-actual_labels = DesiredCells.data_celltype_indices;
-err = sum(actual_labels ~= new_labels)/length(actual_labels);
-
-% PLOT - True Labels
-display('Plotting PCA - True Labels')
-=======
-display('Plotting PCA')
->>>>>>> a490702ba5d23f0bd4dede2e71367982a06d6d5f
-plotIn3D = false;
-figure('name','PCA'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;
-    if(plotIn3D)
-        display('plotting 3D');
-        scatter3(score_PCA(lb:ub,1),score_PCA(lb:ub,2),score_PCA(lb:ub,3), 20, colors(i,:));
-    else
-        % Plot scatter for PCA
-        scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
-    end
-end
-title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
-
-legend(whichCellTypes.list)
-hold off;
-drawnow
-
-% PLOT - New Labels
-display('Plotting PCA - New Labels')
-plotIn3D = false;
-figure('name','PCA'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;
-    for j = lb:ub
-        % Plot scatter for PCA
-        new_label_name = CellData.possible_cell_types(new_labels(j));        
-        rgb = CellSubtype2Hue(new_label_name, hueSensitivity);
-        scatter(score_PCA(j,1),score_PCA(j,2), 20, rgb);
-    end
-end
-title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
-legend(whichCellTypes.list)
-hold off;
-drawnow
-
-% Find k-means clusters from reduced data from PCA
-%[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
-
-% Calculate the average of each label to find a centroid for each.
-
-
-%%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% t-SNE (Max's Code) %%
 % dimensionality reduction to dim = 2
@@ -192,27 +125,22 @@ display('Running t-SNE (Max Code) on Data');
 tic;
 [tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
 tsne_time = toc;
-% Plot results
-display('Plotting t-SNE (Maxs Code)')
-figure('name','t-SNE: Maxs Code'); 
-hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
-    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
 
-<<<<<<< HEAD
+% User alters these variables
+processed_data = tsne_output;
+figName = 'tSNE: Vladymyrov';
+plot_title = ['tSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
 
-=======
->>>>>>> a490702ba5d23f0bd4dede2e71367982a06d6d5f
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+label_err
+
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
+
 % Find k-means clusters from reduced data from t-SNE
-[tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
+% [tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
 
 %% s-SNE %%
 % dimensionality reduction to dim = 2
@@ -232,21 +160,21 @@ tic;
 [ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
 ssne_time = toc;
 
-% Plot results
-figure('name','s-SNE (Maxs Code)'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(ssne_output(lb:ub,1),ssne_output(lb:ub,2), 20, colors(i,:));
-    title(['SSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
+% User alters these variables
+processed_data = ssne_output;
+figName = 'sSNE: Vladymyrov';
+plot_title = ['sSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
+
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+label_err
+
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
 % Find k-means clusters from reduced data from s-SNE
-[ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
+% [ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
 
 %% EE %%
 % dimensionality reduction to dim = 2
@@ -301,12 +229,10 @@ legend(whichCellTypes.list)
 % for i = 1:length(figHandles)
 %     set(new_splots{i}, 'pos', sppos(i,:));
 % end
-%%
+%
 
-<<<<<<< HEAD
 %% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-=======
->>>>>>> a490702ba5d23f0bd4dede2e71367982a06d6d5f
+
 hold off;
 drawnow
 
