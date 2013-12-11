@@ -30,10 +30,19 @@ classdef CellData < handle
         fcs_ext = '.fcs';
         possible_stimulation_levels = {'Basal', 'PVO4'}; 
         surface_protein_tag = 'CD'; % case sensitive
-    end
+        possible_cell_types = {'HSC', 'MPP', 'CMP', 'GMP', 'MEP', ... % Stem Cells
+            'Plasma cell', 'Pre-B I', 'Pre-B II', 'Immature B', 'Mature CD38lo B', 'Mature CD38mid B', ... % B Cells
+            'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T',...  % T Cells
+            'NK',... % NK Cells
+            'Plasmacytoid DC', ... % Plasmacytoid DC
+            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte', % Monocytes            
+        };        
+    end   
+
     
     properties
-        data = []; % [m x n] matrix read from the .fcs file        
+        data = []; % [m x n] matrix read from the .fcs file    
+        data_celltype_indices = []; % m x 1 vector of indices to possible_cell_types
         column_headings = {}; % string of the names of the columns
         cell_stimulation_levels = {}; % Basal, PV04
         cell_types = {}; % HSC, GMP, MPP, Mature CD38mid B, etc.
@@ -41,11 +50,13 @@ classdef CellData < handle
     
     properties(SetAccess = private)
         data_subset_indicies_for_merged_data = [1]; % if obj formed under merging, it contains row indices to the points at which the data changes from one CellData parent to the nex
+        data_subset_labels = []; % References cell_types. Set in 'merge' function
     end
     
     properties(Access = private)
         protein_column_index = 3; % the fcs data has columns 3:end as protein data, the first two columns are Time and Cell Length
         header = {}; % data struct as read in by the reader
+        cell_types_added = {}; % Equivalent to cell_types but not in 'Set' format - allows for repeats for bookkeeping what chunks of data were added from what source
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +102,11 @@ classdef CellData < handle
         % the integer array data_subset_indicies_for_merged_data contains
         % indices to the row indices that denote the change from one
         % parents data to the next. The last entry = size(child.data,1)+1;
-        
+        % 
+        % if numRandDataPts is nonempty, then upon merging, numRandDataPts
+        % random data points are taken from each CellData object's data for merging. if
+        % nnumRandDataPts > size(data,1) for any object, all the data is
+        % used
         function obj = merge(pointer_array, numRandDataPts)       
             
             % Check the objects in the pointer_array are column_heading
@@ -105,14 +120,25 @@ classdef CellData < handle
             obj.column_headings = pointer_array(1).column_headings;  
             for i = 1:length(pointer_array)
                 % Update data, stimulation level, and cell type
-                obj.addData( pointer_array(i).data );                
+                ad = pointer_array(i).data;
+                if(nargin == 2)
+                    r = randperm(size(ad,1));
+                    r = r(1:min(numRandDataPts, size(ad,1)));
+                    ad = ad(r,:);
+                end
+                obj.addData( ad );                
                 obj.addStimLevel( pointer_array(i).cell_stimulation_levels );
                 obj.addCellType( pointer_array(i).cell_types );
                 
                 % Update data indicies
-                m = size(pointer_array(i).data, 1);
+                m = size(ad, 1);
                 temp = obj.data_subset_indicies_for_merged_data;
                 obj.data_subset_indicies_for_merged_data = [temp, temp(end) + m];
+                
+                % Update cell labels
+                lb = obj.data_subset_indicies_for_merged_data(i);
+                ub = chunk_indices(i+1)-1;
+                obj.data_subset_labels(lb:ub) = obj.indexOfCellType(
             end
         end
     end
@@ -151,6 +177,9 @@ classdef CellData < handle
                 [str, rem] = strtok(rem, '_');         %#ok<STTOK>
             end
             this.cell_types = {str};
+            
+            % Create label vector
+            this.
         end                     
         
         % ADD DATA %
@@ -201,7 +230,7 @@ classdef CellData < handle
             % Return data subset as specified by numRandDataPts
             if(nargin == 2)
                 r = randperm(size(this.data,1));
-                r = r(1:numRandDataPts);
+                r = r(1:min(numRandDataPts, size(matrix,1)));
                 matrix = matrix(r,:);
             end
         end
@@ -214,9 +243,18 @@ classdef CellData < handle
             matrix = this.data;
             if(nargin == 2)
                 r = randperm(size(this.data,1));
-                r = r(1:numRandDataPts);
+                r = r(1:min(numRandDataPts, size(matrix,1)));
                 matrix = matrix(r,:);
             end
+        end
+        
+        % INDEX OF CELL TYPE %
+        % the cell types are in a matlab-cell.
+        % this function returns the index of a particular type
+        % relative to the Constant possible_cell_types variable
+        function idx = indexOfCellType(this, str_ct)            
+            strpos = strcmpi(this.possible_cell_types, str_ct);
+            idx = find(strpos == 1);
         end
 
         
