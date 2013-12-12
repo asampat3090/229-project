@@ -12,7 +12,7 @@ addpath(genpath(currentFolder));
 
 %% %%%%% DATA PRE-PROCESSING %%%%%
 
-% Script Variables
+% Script Variables 
 cell_data_array_all = []; % array of pointers to all CellData objects created
 
 % Create array of all fcs files as CellData objects
@@ -37,17 +37,10 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-<<<<<<< HEAD
-whichCellTypes = Monocytes & pDC & NK; 
-% whichCellTypes = TCells & BCells;
-numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
-hueSensitivity = .75;
-=======
-whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
-% whichCellTypes = TCells;
-numRandTrainExPerFile = 200; %seems optimal for tsne 
+% whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
+whichCellTypes = Monocytes & pDC & BCells & TCells;
+numRandTrainExPerFile = 400; %seems optimal for tsne 
 hueSensitivity = 2.5;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -96,13 +89,9 @@ end
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PCA %%
 display('Running PCA on Data')
-<<<<<<< HEAD
-[coeff,score_PCA,latent] = princomp(data_stack);
-=======
 tic;
 [coeff,score_PCA,latent] = princomp(data_stack);
 PCA_time = toc;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 display('Plotting PCA')
 plotIn3D = false;
 figure('name','PCA'); hold on;
@@ -126,8 +115,7 @@ drawnow
 %[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
 
 % Calculate the average of each label to find a centroid for each.
-for i=1:15
-    
+
 
 %%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -146,10 +134,7 @@ opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
 display('Running t-SNE (Max Code) on Data');
-<<<<<<< HEAD
-=======
 tic;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 [tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
 tsne_time = toc;
 % Plot results
@@ -167,12 +152,9 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
-=======
 % Find k-means clusters from reduced data from t-SNE
 [tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
 
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 %% s-SNE %%
 % dimensionality reduction to dim = 2
 % see the file alg_ssne for more details
@@ -187,19 +169,12 @@ opts.maxit = 600; opts.runtime = 900; opts.tol = 1e-3;
 opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
-<<<<<<< HEAD
-[ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
-
-% Plot results
-figure; hold on;
-=======
 tic;
 [ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
 ssne_time = toc;
 
 % Plot results
 figure('name','s-SNE (Maxs Code)'); hold on;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;        
@@ -208,14 +183,11 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-<<<<<<< HEAD
-=======
 hold off;
 drawnow
 
 % Find k-means clusters from reduced data from s-SNE
 [ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 
 %% EE %%
 % dimensionality reduction to dim = 2
@@ -231,19 +203,12 @@ opts.maxit = 100; opts.runtime = 900; opts.tol = 1e-3;
 opts.X0 = 1e-5*randn(size(data_stack, 1), dim);
 
 % Run algorithm
-<<<<<<< HEAD
-[ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
-
-% Plot results
-figure; hold on;
-=======
 tic;
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
 ee_time = toc;
 
 % Plot results
 figure('name','EE (Maxs Code)'); hold on;
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 for i = 1:whichCellTypes.length()
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;        
@@ -252,43 +217,39 @@ for i = 1:whichCellTypes.length()
        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
 end
 legend(whichCellTypes.list)
-<<<<<<< HEAD
-
-%% Merge select figures into 1 with subplots
-
-% Find figures
-figHandles_all = findobj('Type','figure'); % Get all
-figHandles = [1 2]; % indexes to figure numbers
-nrows = 1;
-ncols = 2;
-
-% Get subplot positions
-nfindex = max(figHandles_all) + 1;
-figure(nfindex); % Create new figure
-sppos = []
-for i = 1:length(figHandles)
-    sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
-end
-
-% Copy figures into subplots of new figure
-new_splots = {};
-for i = 1:length(figHandles)
-    new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
-end
-for i = 1:length(figHandles)
-    set(new_splots{i}, 'pos', sppos(i,:));
-end
-
-%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-=======
 hold off;
 drawnow
+
 
 % Find k-means clusters from reduced data from EE
 [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
 
-%%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
+%% Merge select figures into 1 with subplots
+
+% % Find figures
+% figHandles_all = findobj('Type','figure'); % Get all
+% figHandles = [1 2]; % indexes to figure numbers
+% nrows = 1;
+% ncols = 2;
+% 
+% % Get subplot positions
+% nfindex = max(figHandles_all) + 1;
+% figure(nfindex); % Create new figure
+% sppos = []
+% for i = 1:length(figHandles)
+%     sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+% end
+% 
+% % Copy figures into subplots of new figure
+% new_splots = {};
+% for i = 1:length(figHandles)
+%     new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+% end
+% for i = 1:length(figHandles)
+%     set(new_splots{i}, 'pos', sppos(i,:));
+% end
+
+%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -370,11 +331,6 @@ legend(whichCellTypes.list)
 hold off;
 drawnow
 
-<<<<<<< HEAD
-%% Locally Linear Embedding
-
-
-=======
 % Find k-means clusters from reduced data from Isomap
 [isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
 
@@ -417,7 +373,6 @@ drawnow
 
 % Find k-means clusters from reduced data from Isomap
 [LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
->>>>>>> 48c3ed7dde9e849d6ada7484cae549500fe1bf2a
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
