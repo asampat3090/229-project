@@ -41,7 +41,8 @@ classdef CellData < handle
             'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T',...  % T Cells
             'NK',... % NK Cells
             'Plasmacytoid DC', ... % Plasmacytoid DC
-            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte', % Monocytes            
+            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte',... % Monocytes 
+            'CancerCells', % Cancer Cells
         };      
         minRGB = [0 0 0]; % make sure the sum of these elements is less than maxRGB(3)
         maxRGB = [0.9 0.9 0.9];        
@@ -150,7 +151,9 @@ classdef CellData < handle
             
             % Check the objects in the pointer_array are column_heading
             % compatible
-            
+            %pointer_array(1).cell_types
+            %pointer_array(1).cell_stimulation_levels
+            %pointer_array(1).column_headings
             if((length(pointer_array) ~= 1) && ~isequal(pointer_array.column_headings))
                 error('pointers being merged must have identical column headers');
             end
