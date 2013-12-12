@@ -202,6 +202,17 @@ tic;
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
 ee_time = toc;
 
+% % Plot results
+% figure('name','EE (Maxs Code)'); hold on;
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;        
+%     scatter(ee_output(lb:ub,1),ee_output(lb:ub,2), 20, colors(i,:));
+%     title(['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+%        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+% end
+% legend(whichCellTypes.list)
+
 % User alters these variables
 processed_data = ee_output;
 figName = 'EE: Vladymyrov';
@@ -249,10 +260,37 @@ makeFiguresPretty;
 hold off;
 drawnow
 
-% Find k-means clusters from reduced data from EE
-[ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
 
-%%%%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Find k-means clusters from reduced data from EE
+% [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
+
+
+%% Merge select figures into 1 with subplots
+
+% % Find figures
+% figHandles_all = findobj('Type','figure'); % Get all
+% figHandles = [1 2]; % indexes to figure numbers
+% nrows = 1;
+% ncols = 2;
+% 
+% % Get subplot positions
+% nfindex = max(figHandles_all) + 1;
+% figure(nfindex); % Create new figure
+% sppos = []
+% for i = 1:length(figHandles)
+%     sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+% end
+% 
+% % Copy figures into subplots of new figure
+% new_splots = {};
+% for i = 1:length(figHandles)
+%     new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+% end
+% for i = 1:length(figHandles)
+%     set(new_splots{i}, 'pos', sppos(i,:));
+% end
+
+%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -335,7 +373,7 @@ hold off;
 drawnow
 
 % Find k-means clusters from reduced data from Isomap
-[isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
+% [isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
 
 %% Locally Linear Embedding
 % Run LLE on Data
@@ -375,7 +413,7 @@ hold off;
 drawnow
 
 % Find k-means clusters from reduced data from Isomap
-[LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
+% [LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
