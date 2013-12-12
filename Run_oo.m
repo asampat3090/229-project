@@ -37,10 +37,11 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-% whichCellTypes = Monocytes & pDC & NK & TCells & BCells; 
-whichCellTypes = Monocytes & pDC & BCells & TCells;
-numRandTrainExPerFile = 400; %seems optimal for tsne 
-hueSensitivity = 2.5;
+% whichCellTypes = Monocytes;
+whichCellTypes = pDC & NK & Monocytes;
+% whichCellTypes = NK;
+numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
+% hueSensitivity = 1.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -75,11 +76,8 @@ data_stack = asinh(data_stack/5);
 % child object DesiredCells. Used for plotting
 chunk_indices = DesiredCells.data_subset_indicies_for_merged_data;
 
-% Get colors - may change for different algorithms
-colors = zeros(length(whichCellTypes), 3); % RGB for every cell subtype
-for j = 1:whichCellTypes.length()
-    colors(j,:) = CellSubtype2Hue(whichCellTypes.list{j}, hueSensitivity);
-end
+% Color of data
+colors= DesiredCells.getRelativeColorsByAbsoluteLabels(); % no argument returns colors based on the original labeling of the data
 
 
 %%%%% ALGORITHM SELECTION %%%%%
@@ -88,36 +86,28 @@ end
 
 %%%%%%%%%%%%%% Naive Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PCA %%
+
+%Run Algorithm
 display('Running PCA on Data')
 tic;
 [coeff,score_PCA,latent] = princomp(data_stack);
 PCA_time = toc;
-display('Plotting PCA')
-plotIn3D = false;
-figure('name','PCA'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;
-    if(plotIn3D)
-        display('plotting 3D');
-        scatter3(score_PCA(lb:ub,1),score_PCA(lb:ub,2),score_PCA(lb:ub,3), 20, colors(i,:));
-    else
-        % Plot scatter for PCA
-        scatter(score_PCA(lb:ub,1),score_PCA(lb:ub,2), 20, colors(i,:));
-        title(['PCA: N/file=' num2str(numRandTrainExPerFile)]);
-    end
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
 
-% Find k-means clusters from reduced data from PCA
-%[PCA_centroid_indices,PCA_centroid_locations,PCA_cluster_point_separation] = kmeans(score_PCA,15);
+% User alters these variables
+processed_data = score_PCA;
+figName = 'PCA';
+plot_title = ['PCA: N/file=' num2str(numRandTrainExPerFile)];
 
-% Calculate the average of each label to find a centroid for each.
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+pca_label_err = label_err;
 
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
-%%%%%%%%%%%%%% Non - Linear Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Makes figures more presentable for papers
+makeFiguresPretty;
 
 %% t-SNE (Max's Code) %%
 % dimensionality reduction to dim = 2
@@ -137,23 +127,25 @@ display('Running t-SNE (Max Code) on Data');
 tic;
 [tsne_output, E, A, T] = alg_tsne(data_stack, dim, opts);
 tsne_time = toc;
-% Plot results
-display('Plotting t-SNE (Maxs Code)')
-figure('name','t-SNE: Maxs Code'); 
-hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(tsne_output(lb:ub,1),tsne_output(lb:ub,2), 20, colors(i,:));
-    title(['TSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
+
+% User alters these variables
+processed_data = tsne_output;
+figName = 'tSNE: Vladymyrov';
+plot_title = ['tSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
+
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+tsne_label_err = label_err
+
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
+
+% Makes figures more presentable for papers
+makeFiguresPretty;
 
 % Find k-means clusters from reduced data from t-SNE
-[tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
+% [tsne_centroid_indices,tsne_centroid_locations,tsne_cluster_point_separation] = kmeans(tsne_output,15);
 
 %% s-SNE %%
 % dimensionality reduction to dim = 2
@@ -173,21 +165,24 @@ tic;
 [ssne_output, E, A, T] = alg_ssne(data_stack, dim, opts);
 ssne_time = toc;
 
-% Plot results
-figure('name','s-SNE (Maxs Code)'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(ssne_output(lb:ub,1),ssne_output(lb:ub,2), 20, colors(i,:));
-    title(['SSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
+% User alters these variables
+processed_data = ssne_output;
+figName = 'sSNE: Vladymyrov';
+plot_title = ['sSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
+
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+ssne_label_err = label_err
+
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
+
+% Makes figures more presentable for papers
+makeFiguresPretty;
 
 % Find k-means clusters from reduced data from s-SNE
-[ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
+% [ssne_centroid_indices,ssne_centroid_locations,ssne_cluster_point_separation] = kmeans(ssne_output,15);
 
 %% EE %%
 % dimensionality reduction to dim = 2
@@ -207,22 +202,68 @@ tic;
 [ee_output, E, A, T] = alg_ee(data_stack, dim, opts);
 ee_time = toc;
 
-% Plot results
-figure('name','EE (Maxs Code)'); hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;        
-    scatter(ee_output(lb:ub,1),ee_output(lb:ub,2), 20, colors(i,:));
-    title(['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
-       ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
-end
-legend(whichCellTypes.list)
+% % Plot results
+% figure('name','EE (Maxs Code)'); hold on;
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;        
+%     scatter(ee_output(lb:ub,1),ee_output(lb:ub,2), 20, colors(i,:));
+%     title(['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)),...
+%        ', t=' num2str(T(end)), ', N/file=' num2str(numRandTrainExPerFile)]);   
+% end
+% legend(whichCellTypes.list)
+
+% User alters these variables
+processed_data = ee_output;
+figName = 'EE: Vladymyrov';
+plot_title = ['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
+
+% CLUSTERING METRIC BASED ON AVERAGING
+[label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+ee_label_err = label_err
+
+% Plot the processed data
+plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
+
+% Makes figures more presentable for papers
+makeFiguresPretty;
+
+%% Merge select figures into 1 with subplots
+
+% % Find figures
+% figHandles_all = findobj('Type','figure'); % Get all
+% figHandles = [1 2]; % indexes to figure numbers
+% nrows = 1;
+% ncols = 2;
+% 
+% % Get subplot positions
+% nfindex = max(figHandles_all) + 1;
+% figure(nfindex); % Create new figure
+% sppos = []
+% for i = 1:length(figHandles)
+%     sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+% end
+% 
+% % Copy figures into subplots of new figure
+% new_splots = {};
+% for i = 1:length(figHandles)
+%     new_splots{end +1} = copyobj(get(figHandles(i), 'children'), nfindex);
+% end
+% for i = 1:length(figHandles)
+%     set(new_splots{i}, 'pos', sppos(i,:));
+% end
+%
+
+%% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 hold off;
 drawnow
 
 
 % Find k-means clusters from reduced data from EE
-[ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
+% [ee_centroid_indices,ee_centroid_locations,ee_cluster_point_separation] = kmeans(ee_output,15);
+
 
 %% Merge select figures into 1 with subplots
 
@@ -332,7 +373,7 @@ hold off;
 drawnow
 
 % Find k-means clusters from reduced data from Isomap
-[isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
+% [isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
 
 %% Locally Linear Embedding
 % Run LLE on Data
@@ -372,7 +413,7 @@ hold off;
 drawnow
 
 % Find k-means clusters from reduced data from Isomap
-[LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
+% [LLE_centroid_indices,LLE_centroid_locations,LLE_cluster_point_separation] = kmeans(score_LLE,15);
 
 %%%%%%%%%%% SNE & t-SNE ALGORITHMS (take a while to converge) %%%%%%%%%%%
 %% 
