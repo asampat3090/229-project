@@ -1,9 +1,19 @@
-\begin{thebibliography}{2}
+\begin{thebibliography}{3}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Amir et~al.(2013)Amir, Davis, Tadmor, Simonds, Levine, Bendall,
+  Shenfeld, Krishnaswamy, Nolan, and Pe'er]{Amir:2013jp}
+Amir, El-ad~David, Davis, Kara~L, Tadmor, Michelle~D, Simonds, Erin~F, Levine,
+  Jacob~H, Bendall, Sean~C, Shenfeld, Daniel~K, Krishnaswamy, Smita, Nolan,
+  Garry~P, and Pe'er, Dana.
+\newblock {viSNE enables visualization of high dimensional single-cell data and
+  reveals phenotypic heterogeneity of leukemia}.
+\newblock \emph{Nature Biotechnology}, 31\penalty0 (6):\penalty0 545--552, June
+  2013.
 
 \bibitem[Bendall et~al.(2011)Bendall, Simonds, Qiu, Amir, Krutzik, Finck,
   Bruggner, Melamed, Trejo, Ornatsky, Balderas, Plevritis, Sachs, Pe'er,
