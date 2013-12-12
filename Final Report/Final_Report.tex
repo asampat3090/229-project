@@ -21,6 +21,9 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 
+% For font
+\usepackage{amssymb}
+
 % As of 2011, we use the hyperref package to produce hyperlinks in the
 % resulting PDF.  If this breaks your system, please commend out the
 % following usepackage line and replace \usepackage{icml2012} with
@@ -43,12 +46,12 @@
 
 % The \icmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
-\icmltitlerunning{2D Cancer Visualization by Dimensionality Reduction}
+\icmltitlerunning{2D Visualization of Immune System Cellular Protein Data by Nonlinear Dimensionality Reduction}
 
 \begin{document} 
 
 \twocolumn[
-\icmltitle{2D Cancer Visualization by Dimensionality Reduction of Immune System Cellular Protein Data}
+\icmltitle{2D Visualization of Immune System Cellular Protein Data by Nonlinear Dimensionality Reduction}
 
 % Author Information
 \icmlauthor{Andre Esteva}{esteva@stanford.edu}
@@ -68,12 +71,108 @@
 \vskip 0.3in
 ]
 
+% ABSTRACT
 \begin{abstract} 
-ICML 2012 full paper submissions are due February 24, 2012. Reviewing will
-be blind to the identities of the authors, and therefore identifying
-information must not appear in any way in papers submitted for review. Submissions must be in PDF, 8 page length limit.
+We present in this paper a way to effectively visualize multi-dimensional immune system cellular data by means of nonlinear methods. We find that Stochastic Neighbor Embedding (SNE), and it's variations, t-SNE and s-SNE, to be most effective at successfully mapping clusters of points into a two dimensional embedding space while preserving both the structure between similar points and the disparity between different clusters. Using a centroid-based metric that relabels points according to the cluster centroid to which they are closest, we conclude that SNE works significantly better than linear and spectral methods. In addtional, by using an optimization approach for SNE similar to Newton's Method, but with the Hessian of the objective function, $\nabla ^2 (E) $, replaced by its first term, we are able to run the SNE varients and EE two orders of magnitude faster than with standard optimization.
+
 \end{abstract} 
 
+% INTRO
+\section{Introduction}
+\label{intro}
+
+\subsection{Immune Cell Data}
+
+In the field of cancer immunology, scientists use the protein content of immune system cells as a way to identify a cells corresponding type. For example, immune system cells, which are contained in bone marrow, are comprised of a variety of cell types, and to a large degree are uniquely identifiable by the proteins they contain. Highly sophisticated methods have been developed that process cells and return information on the types and quantities of proteins expressed in those cells. This data can then be viewed by an expert in the field and categorized. The laborious process of viewing the different dimensions of protein expression and categorizing a cell's type is known as gating. Figure ~\ref{CellGating}, below, taken from \cite{Amir:2013jp} shows this graphically.
+
+\begin{figure}[ht]
+\label{CellGating}
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{CellGating}}
+\caption{Strategy for cell gating: Two single dimensions of a cell are viewed at a time
+and through an iterative process the cell is classified}
+\end{center}
+\vskip -0.2in
+\end{figure} 
+
+\subsection{Project Goals and Metrics}
+
+It is of interest to cancer immunologists to find structure within multi-dimensional protein expression space and map it onto a lower dimensions (refered to henceforth as a map space) for ease of visualization and understanding. As cells change and evolve, so too do the types and quantities of the proteins they express. This leads to a shifting of their representation in multi-dimensional space which can be tracked. Dimensionality reduction of original biological data coupled with a metric for how well the projection represents the original data would provide biologists with a powerful tool for understanding the structure of their data. To address these challenges we demonstrate:
+
+\begin{itemize}
+\item The application of linear and non-linear methods of dimensionality reduction of multi-dimensional protein data
+\item A metric-based comparison of how each algorithm performs
+\end{itemize}
+
+% DATA REPRESENTATION
+\section{Data Representation}
+\label{data_representation}
+
+\subsection{Data Acquisition}
+
+\textbf{Mass cytometry} is a single-cell multiparametric protein detection technology based on inductively coupled plasma mass spectrometry. It is an extension of flow cytometry in which antibodies are tagged with isotopically pure rare earth elements allowing simultaneous measurement of greater than 40 parameters while circumventing the issue of spectral overlap. In single-cell droplet form, the cells are passed through an elemental mass spectrometer and an integrator to generate an $m \times p$ matrix where $m$ is the number of cells processed and $p$ is the number of distinct proteins contained in the cell set. These matrices are stored as .FCS files in online databanks which we have been granted access to. Figure ~\ref{DataAcquisition} shows this process. 
+
+\begin{figure}[ht]
+\label{DataAcquisition}
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{DataAcquisition}}
+\caption{Overview of data acquisition, from extraction of cellular protein counts to storage in online databanks}
+\end{center}
+\vskip -0.2in
+\end{figure} 
+
+Table ~\ref{table_cell_type} lists the cell types and subtypes that are parsed using this method. 
+
+\begin{table}[tb]
+\caption{Classification of Cell Types and their Corresponding Sub-Types}
+\label{table_cell_type}
+\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
+\begin{tabular}{lcccr}
+\hline
+\abovespace\belowspace
+Cell Types & Sub-types  \\
+\hline
+\abovespace
+Stem Cell	&  HSC, MPP, CMP, GMP, MEP \\
+B Cells 	& Plasma, pre-B-I, pre-B- II, Immature, \\ 
+		&			Mature CD38 low, Mature CD38 mid\\
+T Cells	& Mature CD4+, Mature CD8+ \\
+		& Naive CD4+, Naive CD8+  \\
+NK		& -   \\
+pDC		& - \\
+\belowspace
+Monocytes & CD11B - , CD11B high, CD11B mid \\
+\hline
+\end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+
+\subsection{Feature Selection}
+The $p=41$ protein counts collected for each cell that passes through mass cytometry is comprised of both intracellular and surface proteins. These two types play fundamentally different roles in cell identification. Surface proteins are semi-permanent markers that last for significant periods of time relative to the lifetime of a cell, whereas intracellular proteins are highly transient and can change quickly. This is analogous to classifying a person based on where they live (semi-permanent) versus what they wore on a particular day (transient). Understanding this, we select as our feature space the $n=17$ surface protein markers of the cell data.
+
+% METHODS
+\section{Methods}
+\label{methods}
+
+The datafiles provided contain cell counts on the order of tens of thousands where we consider each cell to be a point in $\mathbb{R}^n$. To simplify our algorithms and account for matrix size differences in the difference .FCS files we run our algorithms on equally sized portions of different cell data. In particular, if we let $\mathbb{S}$ be the set of all cell sub-types as defined in Table ~\ref{table_cell_type}, $S \in \mathbb{S}$  be some subset of interest with cardinality $|S|$, and N some fixed positive integer, then by taking N rows from each sub-type $s \in S$ we form a matrix $M \in \mathbb{R}^{N |S| \times n}$ on which we can run algorithms quickly and without giving unfair weighting to a particular cell sub-type.
+
+We consider various algorithms which project sets of data in $\mathbb{R}^n$ onto $\mathbb{R}^2$ for easy visualization.
+
+\subsection{Linear Methods}
+
+\subsection{Spectral Methods}
+
+\subsection{ Nonlinear Methods}
+
+% $\mathbb{R}^n$
 \section{Electronic Submission}
 \label{submission}
 
