@@ -9,6 +9,11 @@
 %                       functions are initially lower case, but if they are
 %                       the union of multiple words, then the 2nd+ words
 %                       are capitalized
+%   absolute labels refers to integers referencing all possible cell types
+%   relative labels refer to integers referencing only existing cell types
+%   in a CellData object
+%   true labeling referes to actual gated information
+%   new labeling is usually the result of an algorithm re-labeling data
 %
 % FCS file data format
 %   contains a large matrix where rows correspond to individual cells and
@@ -18,6 +23,7 @@
 %
 %   contains a header struct, which labels the columns of the matrix as
 %   well as contains data like the name of the cell type
+
 
 classdef CellData < handle
     
@@ -35,7 +41,8 @@ classdef CellData < handle
             'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T',...  % T Cells
             'NK',... % NK Cells
             'Plasmacytoid DC', ... % Plasmacytoid DC
-            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte', % Monocytes            
+            'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte',... % Monocytes 
+            'CancerCells', % Cancer Cells
         };      
         minRGB = [0 0 0]; % make sure the sum of these elements is less than maxRGB(3)
         maxRGB = [0.9 0.9 0.9];        
@@ -144,7 +151,9 @@ classdef CellData < handle
             
             % Check the objects in the pointer_array are column_heading
             % compatible
-            
+            pointer_array(1).cell_types
+            point
+            pointer_array.column_headings
             if((length(pointer_array) ~= 1) && ~isequal(pointer_array.column_headings))
                 error('pointers being merged must have identical column headers');
             end
@@ -316,7 +325,26 @@ classdef CellData < handle
             end
         end
         
-        function get
+        % GET RELATIVE COLORS BY ABSOLUTE LABELS %
+        % Returns the relative coloring of the object's data based on an
+        % absolute labeling (integers) in new_labels
+        % if new_labels is empty it returns the colors of the actual
+        % labelling
+        function colors = getRelativeColorsByAbsoluteLabels(this, new_labels)
+            if(nargin == 1)
+                colors = this.colors_relative;
+                return;
+            end
+            
+            colors = zeros(length(new_labels), 3);
+            for i = 1:length(new_labels)
+                ct = CellData.possible_cell_types{new_labels(i)};
+                r_idx = this.RelativeIndexOfCellType(ct);
+                rgb = this.colors_relative(r_idx,:);
+                colors(i,1:3) = rgb;
+            end
+            
+        end
         
         % CELL TYPE TO RELATIVE RGB %
         % arg can be an int or string, references the 

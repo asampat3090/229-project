@@ -29,6 +29,7 @@ end
 %%%%% VARIABLE INITIALIZATION %%%%%
 
 % Cell Categories - definitions per the biologists
+CancerCells = Set({'CancerCells'});
 StemCells = Set({'HSC', 'MPP', 'CMP', 'GMP', 'MEP'});
 BCells = Set({'Plasma cell', 'Pre-B I', 'Pre-B II', 'Immature B', 'Mature CD38lo B', 'Mature CD38mid B'});
 TCells = Set({'Mature CD4+ T', 'Mature CD8+ T', 'Naive CD4+ T', 'Naive CD8+ T'});
@@ -37,8 +38,14 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
+<<<<<<< HEAD
 whichCellTypes = pDC & NK & Monocytes & TCells & BCells & StemCells;
 % whichCellTypes = TCells & Monocytes;
+=======
+% whichCellTypes = Monocytes;
+whichCellTypes = StemCells & BCells & TCells & NK & pDC & NK & Monocytes;
+% whichCellTypes = NK;
+>>>>>>> 7c195ffa3af3e117fe80c0d8b84124b943ed7ac3
 numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
@@ -407,7 +414,7 @@ title(['Isomap: All Cell Types']);
 % drawnow
 
 % Find k-means clusters from reduced data from Isomap
-% [isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
+[isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);
 
 %% Locally Linear Embedding
 % Run LLE on Data
@@ -527,7 +534,51 @@ drawnow
 
 %% Liner Support Vector Machine
 
-%%%%%%%%%%%%%%%%% TRIAL UNTIL WE GET CANCER DATA %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% MULTICLASS CLASSIFICATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+actual_labels = DesiredCells.data_celltype_indices;
+% Randomly permute rows before processing
+permutation_mat = randperm(size(actual_labels,2));
+actual_labels = actual_labels';
+actual_labels = actual_labels(permutation_mat,1);
+data_stack = data_stack(permutation_mat,:);
+TrainingSet = data_stack(1:5000,:);
+GroupTrain = actual_labels(1:5000);
+TestSet = data_stack(5001:end,:);
+
+u=unique(GroupTrain);
+N=length(u);
+if(N>2)
+    disp('multi class problem');
+    itr=1;
+    classes=0;
+    results = zeros(size(TestSet,1),1);
+    while(itr<=length(u))
+        %this while loop is the multiclass SVM Trick
+        c1=(GroupTrain==u(itr));
+        newClass=c1;
+        options.MaxIter = 100000;
+        svmStruct = svmtrain(TrainingSet,newClass,'showplot',true,'Options',options);
+        classes = svmclassify(svmStruct,TestSet,'showplot',true)
+        % Populate the results 
+        for i=1:length(classes)
+            if(classes(i)==1)
+                if results(i)~=0
+                    results(i) = u(itr);
+                end
+            end
+        end
+        itr=itr+1
+    end
+%clc;
+itr=itr-1;
+disp(itr)
+end
+
+
+%results = multisvm(TrainingSet, GroupTrain, TestSet); 
+
+%%%%%% BINARY CLASSIFICATION - TRIAL UNTIL WE GET CANCER DATA %%%%%%%%%%%
 
 % % Prepare the class labels
 % % First prepare the labels for the healthy cells (label as zero)
