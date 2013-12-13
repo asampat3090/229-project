@@ -1,42 +1,66 @@
-\begin{thebibliography}{4}
-\providecommand{\natexlab}[1]{#1}
-\providecommand{\url}[1]{\texttt{#1}}
-\expandafter\ifx\csname urlstyle\endcsname\relax
-  \providecommand{\doi}[1]{doi: #1}\else
-  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
 
-\bibitem[Amir et~al.(2013)Amir, Davis, Tadmor, Simonds, Levine, Bendall,
-  Shenfeld, Krishnaswamy, Nolan, and Pe'er]{Amir:2013jp}
-Amir, El-ad~David, Davis, Kara~L, Tadmor, Michelle~D, Simonds, Erin~F, Levine,
-  Jacob~H, Bendall, Sean~C, Shenfeld, Daniel~K, Krishnaswamy, Smita, Nolan,
-  Garry~P, and Pe'er, Dana.
-\newblock {viSNE enables visualization of high dimensional single-cell data and
-  reveals phenotypic heterogeneity of leukemia}.
-\newblock \emph{Nature Biotechnology}, 31\penalty0 (6):\penalty0 545--552, June
-  2013.
+\bibitem{Bendall:2011bm}
+\bibinfo{author}{Bendall, S.~C.} \emph{et~al.}
+\newblock \bibinfo{title}{{Single-Cell Mass Cytometry of Differential Immune
+  and Drug Responses Across a Human Hematopoietic Continuum}}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{332}},
+  \bibinfo{pages}{687--696} (\bibinfo{year}{2011}).
 
-\bibitem[Bendall et~al.(2011)Bendall, Simonds, Qiu, Amir, Krutzik, Finck,
-  Bruggner, Melamed, Trejo, Ornatsky, Balderas, Plevritis, Sachs, Pe'er,
-  Tanner, and Nolan]{Bendall:2011bm}
-Bendall, S~C, Simonds, E~F, Qiu, P, Amir, E a~D, Krutzik, P~O, Finck, R,
-  Bruggner, R~V, Melamed, R, Trejo, A, Ornatsky, O~I, Balderas, R~S, Plevritis,
-  S~K, Sachs, K, Pe'er, D, Tanner, S~D, and Nolan, G~P.
-\newblock {Single-Cell Mass Cytometry of Differential Immune and Drug Responses
-  Across a Human Hematopoietic Continuum}.
-\newblock \emph{Science}, 332\penalty0 (6030):\penalty0 687--696, May 2011.
+\bibitem{Amir:2013jp}
+\bibinfo{author}{Amir, E.-a.~D.} \emph{et~al.}
+\newblock \bibinfo{title}{{viSNE enables visualization of high dimensional
+  single-cell data and reveals phenotypic heterogeneity of leukemia}}.
+\newblock \emph{\bibinfo{journal}{Nature Biotechnology}}
+  \textbf{\bibinfo{volume}{31}}, \bibinfo{pages}{545--552}
+  (\bibinfo{year}{2013}).
 
-\bibitem[Crammer \& Singer(2002)Crammer and Singer]{Crammer:2002uy}
-Crammer, Koby and Singer, Yoram.
-\newblock {On the algorithmic implementation of multiclass kernel-based vector
-  machines}.
-\newblock \emph{The Journal of Machine Learning Research}, 2:\penalty0
-  265--292, March 2002.
+\bibitem{Vladymyrov:2012ws}
+\bibinfo{author}{Vladymyrov, M.} \& \bibinfo{author}{Carreira-Perpinan, M.}
+\newblock \bibinfo{title}{{Partial-Hessian strategies for fast learning of
+  nonlinear embeddings}}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:1206.4646}}
+  (\bibinfo{year}{2012}).
 
-\bibitem[Vladymyrov \& Carreira-Perpinan(2012)Vladymyrov and
-  Carreira-Perpinan]{Vladymyrov:2012ws}
-Vladymyrov, Max and Carreira-Perpinan, Miguel.
-\newblock {Partial-Hessian strategies for fast learning of nonlinear
-  embeddings}.
-\newblock \emph{arXiv preprint arXiv:1206.4646}, 2012.
+\bibitem{Hinton:2002vs}
+\bibinfo{author}{Hinton, G.~E.} \& \bibinfo{author}{Roweis, S.~T.}
+\newblock \bibinfo{title}{{1. Hinton, G. E. {\&} Roweis, S. T. Stochastic
+  neighbor embedding. Advances in neural information {\ldots} (2002). - Google
+  Scholar}}.
+\newblock \emph{\bibinfo{journal}{Advances in neural information {\ldots}}}
+  (\bibinfo{year}{2002}).
+
+\bibitem{Nam:2004jm}
+\bibinfo{author}{Nam, K.}, \bibinfo{author}{Je, H.} \& \bibinfo{author}{Choi,
+  S.}
+\newblock \bibinfo{title}{{Fast stochastic neighbor embedding: a trust-region
+  algorithm}}.
+\newblock In \emph{\bibinfo{booktitle}{Neural Networks, 2004. Proceedings. 2004
+  IEEE International Joint Conference on}} (\bibinfo{year}{2004}).
+
+\bibitem{CarreiraPerpinan:2010tx}
+\bibinfo{author}{Carreira-Perpin{\'a}n, M.~A.}
+\newblock \bibinfo{title}{{The Elastic Embedding Algorithm for Dimensionality
+  Reduction.}}
+\newblock \emph{\bibinfo{journal}{ICML}}  (\bibinfo{year}{2010}).
+
+\bibitem{VanderMaaten:2008tm}
+\bibinfo{author}{Van~der Maaten, L.} \& \bibinfo{author}{Hinton, G.}
+\newblock \bibinfo{title}{{Visualizing data using t-SNE}}.
+\newblock \emph{\bibinfo{journal}{Journal of Machine Learning Research}}
+  \textbf{\bibinfo{volume}{9}}, \bibinfo{pages}{85} (\bibinfo{year}{2008}).
+
+\bibitem{Cook:2007tb}
+\bibinfo{author}{Cook, J.}, \bibinfo{author}{Sutskever, I.} \&
+  \bibinfo{author}{Mnih, A.}
+\newblock \bibinfo{title}{{Visualizing similarity data with a mixture of
+  maps}}.
+\newblock \emph{\bibinfo{journal}{International {\ldots}}}
+  (\bibinfo{year}{2007}).
 
 \end{thebibliography}
