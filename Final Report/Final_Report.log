@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  13 DEC 2013 03:31
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  13 DEC 2013 14:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -371,7 +371,21 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 90.
 \cv@tmpc@=\count129
 \cv@tmpc=\count130
 )
-(./Final_Report.aux)
+(./Final_Report.aux
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.48 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+? 
+)
 \openout1 = `Final_Report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 58.
@@ -388,8 +402,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
-
-(/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
+ (/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count131
 \scratchdimen=\dimen137
@@ -459,7 +472,7 @@ File: CellGating.png Graphic file (type png)
 Package pdftex.def Info: CellGating.png used on input line 99.
 (pdftex.def)             Requested size: 234.8775pt x 227.44658pt.
 
-Underfull \vbox (badness 3291) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [1{/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
@@ -474,40 +487,28 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 111.
 
-<DataAcquisition.png, id=29, 742.775pt x 318.18875pt>
+<DataAcquisition.png, id=32, 742.775pt x 318.18875pt>
 File: DataAcquisition.png Graphic file (type png)
 
 <use DataAcquisition.png>
 Package pdftex.def Info: DataAcquisition.png used on input line 126.
 (pdftex.def)             Requested size: 234.8775pt x 100.61354pt.
 
-Overfull \hbox (12.38081pt too wide) in paragraph at lines 142--161
+Overfull \hbox (12.38081pt too wide) in paragraph at lines 140--159
  [] 
+ []
+
+
+Underfull \vbox (badness 1715) has occurred while \output is active []
+
+ [2 <./DataAcquisition.png>]
+Underfull \hbox (badness 1603) in paragraph at lines 178--179
+[]\OT1/cmr/m/n/10 Spectral meth-ods like Lo-cally Lin-ear Em-bed-ding
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [2 <./DataAcquisition.png>]
-Underfull \hbox (badness 1603) in paragraph at lines 180--181
-[]\OT1/cmr/m/n/10 Spectral meth-ods like Lo-cally Lin-ear Em-bed-ding
- []
-
-
-Underfull \vbox (badness 5908) has occurred while \output is active []
-
-
-Underfull \hbox (badness 2103) in paragraph at lines 196--197
-[]\OT1/cmr/m/n/10 And con-di-tional prob-a-bil-ity ma-tri-ces $\OMS/cmsy/m/n/10
- f\OML/cmm/m/it/10 p[]\OMS/cmsy/m/n/10 g$ \OT1/cmr/m/n/10 and
- []
-
-
-Overfull \hbox (74.41707pt too wide) in paragraph at lines 218--218
-[] 
- []
-
-[3]
 Package epstopdf Info: Source file: <PCA_AllCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
 (epstopdf)                    size: 428415 bytes
@@ -518,7 +519,8 @@ Package epstopdf Info: Source file: <PCA_AllCells_N=400.eps>
 verted-to.pdf PCA_AllCells_N=400.eps>
 (epstopdf)             \includegraphics on input line 237.
 Package epstopdf Info: Output file is already uptodate.
- <PCA_AllCells_N=400-eps-converted-to.pdf, id=65, 1540.75626pt x 811.03pt>
+
+<PCA_AllCells_N=400-eps-converted-to.pdf, id=56, 1540.75626pt x 811.03pt>
 File: PCA_AllCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
 
 <use PCA_AllCells_N=400-eps-converted-to.pdf>
@@ -537,7 +539,7 @@ o.pdf>
 (epstopdf)             \includegraphics on input line 238.
 Package epstopdf Info: Output file is already uptodate.
 
-<PCA_AllCells_N=400_relabel-eps-converted-to.pdf, id=66, 1540.75626pt x 811.03p
+<PCA_AllCells_N=400_relabel-eps-converted-to.pdf, id=57, 1540.75626pt x 811.03p
 t>
 File: PCA_AllCells_N=400_relabel-eps-converted-to.pdf Graphic file (type pdf)
  <use PCA_AllCells_N=400_relabel-eps-converted-to.pdf>
@@ -556,7 +558,7 @@ onverted-to.pdf PCA_T&Moncytes_N=400.eps>
 (epstopdf)             \includegraphics on input line 251.
 Package epstopdf Info: Output file is already uptodate.
 
-<PCA_T&Moncytes_N=400-eps-converted-to.pdf, id=68, 1540.75626pt x 811.03pt>
+<PCA_T&Moncytes_N=400-eps-converted-to.pdf, id=59, 1540.75626pt x 811.03pt>
 File: PCA_T&Moncytes_N=400-eps-converted-to.pdf Graphic file (type pdf)
 
 <use PCA_T&Moncytes_N=400-eps-converted-to.pdf>
@@ -575,7 +577,7 @@ el-eps-converted-to.pdf PCA_T&Moncytes_N=400_relabel.eps>
 (epstopdf)             \includegraphics on input line 252.
 Package epstopdf Info: Output file is already uptodate.
 
-<PCA_T&Moncytes_N=400_relabel-eps-converted-to.pdf, id=69, 1540.75626pt x 810.0
+<PCA_T&Moncytes_N=400_relabel-eps-converted-to.pdf, id=60, 1540.75626pt x 810.0
 2625pt>
 File: PCA_T&Moncytes_N=400_relabel-eps-converted-to.pdf Graphic file (type pdf)
 
@@ -584,8 +586,11 @@ Package pdftex.def Info: PCA_T&Moncytes_N=400_relabel-eps-converted-to.pdf used
  on input line 252.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
 
-Underfull \vbox (badness 2644) has occurred while \output is active []
 
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3 <./PCA_AllCells_N=400-eps-converted-to.pdf> <./PCA_AllCells_N=400_relabel-ep
+s-converted-to.pdf>]
 Package epstopdf Info: Source file: <ISOMAP_AllCells_N=100.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
 (epstopdf)                    size: 102868 bytes
@@ -598,9 +603,10 @@ converted-to.pdf ISOMAP_AllCells_N=100.eps>
 (epstopdf)             \includegraphics on input line 266.
 Package epstopdf Info: Output file is already uptodate.
 
-<ISOMAP_AllCells_N=100-eps-converted-to.pdf, id=71, 1540.75626pt x 810.02625pt>
+<ISOMAP_AllCells_N=100-eps-converted-to.pdf, id=106, 1540.75626pt x 810.02625pt
+>
 File: ISOMAP_AllCells_N=100-eps-converted-to.pdf Graphic file (type pdf)
-<use ISOMAP_AllCells_N=100-eps-converted-to.pdf>
+ <use ISOMAP_AllCells_N=100-eps-converted-to.pdf>
 Package pdftex.def Info: ISOMAP_AllCells_N=100-eps-converted-to.pdf used on inp
 ut line 266.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
@@ -616,8 +622,8 @@ ed-to.pdf>
 (epstopdf)             \includegraphics on input line 267.
 Package epstopdf Info: Output file is already uptodate.
 
-<ISOMAP_Monoctypes&TCells_N=400-eps-converted-to.pdf, id=72, 1540.75626pt x 810
-.02625pt>
+<ISOMAP_Monoctypes&TCells_N=400-eps-converted-to.pdf, id=107, 1540.75626pt x 81
+0.02625pt>
 File: ISOMAP_Monoctypes&TCells_N=400-eps-converted-to.pdf Graphic file (type pd
 f)
  <use ISOMAP_Monoctypes&TCells_N=400-eps-converted-to.pdf>
@@ -632,15 +638,15 @@ Package epstopdf Info: Source file: <tSNE_AllCells_N=400.eps>
 (epstopdf)                    size: 501620 bytes
 (epstopdf)             Command: <repstopdf --outfile=tSNE_AllCells_N=400-eps-co
 nverted-to.pdf tSNE_AllCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 283.
+(epstopdf)             \includegraphics on input line 313.
 Package epstopdf Info: Output file is already uptodate.
 
-<tSNE_AllCells_N=400-eps-converted-to.pdf, id=77, 1540.75626pt x 810.02625pt>
+<tSNE_AllCells_N=400-eps-converted-to.pdf, id=115, 1540.75626pt x 810.02625pt>
 File: tSNE_AllCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
 
 <use tSNE_AllCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: tSNE_AllCells_N=400-eps-converted-to.pdf used on input
- line 283.
+ line 313.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
 Package epstopdf Info: Source file: <tSNE_AllCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -651,15 +657,15 @@ to.pdf>
 (epstopdf)                    size: 506863 bytes
 (epstopdf)             Command: <repstopdf --outfile=tSNE_AllCells_N=400_relabe
 l-eps-converted-to.pdf tSNE_AllCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 284.
+(epstopdf)             \includegraphics on input line 314.
 Package epstopdf Info: Output file is already uptodate.
 
-<tSNE_AllCells_N=400_relabel-eps-converted-to.pdf, id=78, 1540.75626pt x 810.02
-625pt>
+<tSNE_AllCells_N=400_relabel-eps-converted-to.pdf, id=116, 1540.75626pt x 810.0
+2625pt>
 File: tSNE_AllCells_N=400_relabel-eps-converted-to.pdf Graphic file (type pdf)
  <use tSNE_AllCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: tSNE_AllCells_N=400_relabel-eps-converted-to.pdf used 
-on input line 284.
+on input line 314.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
 Package epstopdf Info: Source file: <tSNE_Monocytes&TCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -670,15 +676,15 @@ to.pdf>
 (epstopdf)                    size: 188092 bytes
 (epstopdf)             Command: <repstopdf --outfile=tSNE_Monocytes&TCells_N=40
 0-eps-converted-to.pdf tSNE_Monocytes&TCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 295.
+(epstopdf)             \includegraphics on input line 325.
 Package epstopdf Info: Output file is already uptodate.
 
-<tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=79, 1540.75626pt x 810.02
-625pt>
+<tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=117, 1540.75626pt x 810.0
+2625pt>
 File: tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
  <use tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf used 
-on input line 295.
+on input line 325.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
 Package epstopdf Info: Source file: <tSNE_Monocytes&TCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -689,21 +695,17 @@ nverted-to.pdf>
 (epstopdf)                    size: 188837 bytes
 (epstopdf)             Command: <repstopdf --outfile=tSNE_Monocytes&TCells_N=40
 0_relabel-eps-converted-to.pdf tSNE_Monocytes&TCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 296.
+(epstopdf)             \includegraphics on input line 326.
 Package epstopdf Info: Output file is already uptodate.
 
-<tSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=80, 1540.75626pt 
-x 810.02625pt>
+<tSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=118, 1540.75626pt
+ x 810.02625pt>
 File: tSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf Graphic file (ty
 pe pdf)
  <use tSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: tSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.p
-df used on input line 296.
+df used on input line 326.
 (pdftex.def)             Requested size: 110.3927pt x 53.94069pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 Package epstopdf Info: Source file: <sSNE_AllCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
 (epstopdf)                    size: 419202 bytes
@@ -712,14 +714,15 @@ Package epstopdf Info: Source file: <sSNE_AllCells_N=400.eps>
 (epstopdf)                    size: 436950 bytes
 (epstopdf)             Command: <repstopdf --outfile=sSNE_AllCells_N=400-eps-co
 nverted-to.pdf sSNE_AllCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 308.
+(epstopdf)             \includegraphics on input line 338.
 Package epstopdf Info: Output file is already uptodate.
-<sSNE_AllCells_N=400-eps-converted-to.pdf, id=81, 1155.31625pt x 643.40375pt>
+
+<sSNE_AllCells_N=400-eps-converted-to.pdf, id=119, 1155.31625pt x 643.40375pt>
 File: sSNE_AllCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
 
 <use sSNE_AllCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: sSNE_AllCells_N=400-eps-converted-to.pdf used on input
- line 308.
+ line 338.
 (pdftex.def)             Requested size: 110.3927pt x 56.60533pt.
 Package epstopdf Info: Source file: <sSNE_AllCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -730,20 +733,16 @@ to.pdf>
 (epstopdf)                    size: 443061 bytes
 (epstopdf)             Command: <repstopdf --outfile=sSNE_AllCells_N=400_relabe
 l-eps-converted-to.pdf sSNE_AllCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 309.
+(epstopdf)             \includegraphics on input line 339.
 Package epstopdf Info: Output file is already uptodate.
 
-<sSNE_AllCells_N=400_relabel-eps-converted-to.pdf, id=82, 1155.31625pt x 644.40
-75pt>
+<sSNE_AllCells_N=400_relabel-eps-converted-to.pdf, id=120, 1155.31625pt x 644.4
+075pt>
 File: sSNE_AllCells_N=400_relabel-eps-converted-to.pdf Graphic file (type pdf)
  <use sSNE_AllCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: sSNE_AllCells_N=400_relabel-eps-converted-to.pdf used 
-on input line 309.
+on input line 339.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 Package epstopdf Info: Source file: <sSNE_Monocytes&TCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
 (epstopdf)                    size: 160098 bytes
@@ -753,15 +752,15 @@ to.pdf>
 (epstopdf)                    size: 167061 bytes
 (epstopdf)             Command: <repstopdf --outfile=sSNE_Monocytes&TCells_N=40
 0-eps-converted-to.pdf sSNE_Monocytes&TCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 320.
+(epstopdf)             \includegraphics on input line 350.
 Package epstopdf Info: Output file is already uptodate.
 
-<sSNE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=83, 1155.31625pt x 644.40
-75pt>
+<sSNE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=121, 1155.31625pt x 644.4
+075pt>
 File: sSNE_Monocytes&TCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
  <use sSNE_Monocytes&TCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: sSNE_Monocytes&TCells_N=400-eps-converted-to.pdf used 
-on input line 320.
+on input line 350.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
 Package epstopdf Info: Source file: <sSNE_Monocytes&TCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -772,21 +771,17 @@ nverted-to.pdf>
 (epstopdf)                    size: 167954 bytes
 (epstopdf)             Command: <repstopdf --outfile=sSNE_Monocytes&TCells_N=40
 0_relabel-eps-converted-to.pdf sSNE_Monocytes&TCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 321.
+(epstopdf)             \includegraphics on input line 351.
 Package epstopdf Info: Output file is already uptodate.
 
-<sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=84, 1155.31625pt 
-x 644.4075pt>
+<sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=122, 1155.31625pt
+ x 644.4075pt>
 File: sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf Graphic file (ty
 pe pdf)
  <use sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.p
-df used on input line 321.
+df used on input line 351.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 Package epstopdf Info: Source file: <EE_AllCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
 (epstopdf)                    size: 422476 bytes
@@ -795,14 +790,15 @@ Package epstopdf Info: Source file: <EE_AllCells_N=400.eps>
 (epstopdf)                    size: 425076 bytes
 (epstopdf)             Command: <repstopdf --outfile=EE_AllCells_N=400-eps-conv
 erted-to.pdf EE_AllCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 334.
+(epstopdf)             \includegraphics on input line 363.
 Package epstopdf Info: Output file is already uptodate.
-<EE_AllCells_N=400-eps-converted-to.pdf, id=85, 1155.31625pt x 644.4075pt>
+
+<EE_AllCells_N=400-eps-converted-to.pdf, id=123, 1155.31625pt x 644.4075pt>
 File: EE_AllCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
 
 <use EE_AllCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: EE_AllCells_N=400-eps-converted-to.pdf used on input l
-ine 334.
+ine 363.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
 Package epstopdf Info: Source file: <EE_AllCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -813,19 +809,19 @@ Package epstopdf Info: Source file: <EE_AllCells_N=400_relabel.eps>
 (epstopdf)                    size: 432271 bytes
 (epstopdf)             Command: <repstopdf --outfile=EE_AllCells_N=400_relabel-
 eps-converted-to.pdf EE_AllCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 335.
+(epstopdf)             \includegraphics on input line 364.
 Package epstopdf Info: Output file is already uptodate.
 
-<EE_AllCells_N=400_relabel-eps-converted-to.pdf, id=86, 1151.30125pt x 641.3962
-6pt>
+<EE_AllCells_N=400_relabel-eps-converted-to.pdf, id=124, 1151.30125pt x 641.396
+26pt>
 File: EE_AllCells_N=400_relabel-eps-converted-to.pdf Graphic file (type pdf)
  <use EE_AllCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: EE_AllCells_N=400_relabel-eps-converted-to.pdf used on
- input line 335.
+ input line 364.
 (pdftex.def)             Requested size: 110.3927pt x 56.61284pt.
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 Package epstopdf Info: Source file: <EE_Monocytes&TCells_N=400.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -836,15 +832,15 @@ Package epstopdf Info: Source file: <EE_Monocytes&TCells_N=400.eps>
 (epstopdf)                    size: 165252 bytes
 (epstopdf)             Command: <repstopdf --outfile=EE_Monocytes&TCells_N=400-
 eps-converted-to.pdf EE_Monocytes&TCells_N=400.eps>
-(epstopdf)             \includegraphics on input line 347.
+(epstopdf)             \includegraphics on input line 375.
 Package epstopdf Info: Output file is already uptodate.
 
-<EE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=87, 1155.31625pt x 644.4075
-pt>
+<EE_Monocytes&TCells_N=400-eps-converted-to.pdf, id=125, 1155.31625pt x 644.407
+5pt>
 File: EE_Monocytes&TCells_N=400-eps-converted-to.pdf Graphic file (type pdf)
  <use EE_Monocytes&TCells_N=400-eps-converted-to.pdf>
 Package pdftex.def Info: EE_Monocytes&TCells_N=400-eps-converted-to.pdf used on
- input line 347.
+ input line 375.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
 Package epstopdf Info: Source file: <EE_Monocytes&TCells_N=400_relabel.eps>
 (epstopdf)                    date: 2013-12-12 23:16:06
@@ -855,70 +851,55 @@ erted-to.pdf>
 (epstopdf)                    size: 166600 bytes
 (epstopdf)             Command: <repstopdf --outfile=EE_Monocytes&TCells_N=400_
 relabel-eps-converted-to.pdf EE_Monocytes&TCells_N=400_relabel.eps>
-(epstopdf)             \includegraphics on input line 348.
+(epstopdf)             \includegraphics on input line 376.
 Package epstopdf Info: Output file is already uptodate.
 
-<EE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=88, 1155.31625pt x 
-644.4075pt>
+<EE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf, id=126, 1155.31625pt x
+ 644.4075pt>
 File: EE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf Graphic file (type
  pdf)
  <use EE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf>
 Package pdftex.def Info: EE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf
- used on input line 348.
+ used on input line 376.
 (pdftex.def)             Requested size: 110.3927pt x 56.72812pt.
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-Underfull \vbox (badness 1776) has occurred while \output is active []
-
- [4 <./PCA_AllCells_N=400-eps-converted-to.pdf> <./PCA_AllCells_N=400_relabel-e
-ps-converted-to.pdf> <./PCA_T&Moncytes_N=400-eps-converted-to.pdf> <./PCA_T&Mon
-cytes_N=400_relabel-eps-converted-to.pdf> <./ISOMAP_AllCells_N=100-eps-converte
-d-to.pdf> <./ISOMAP_Monoctypes&TCells_N=400-eps-converted-to.pdf> <./tSNE_AllCe
-lls_N=400-eps-converted-to.pdf> <./tSNE_AllCells_N=400_relabel-eps-converted-to
-.pdf>]
-
-LaTeX Warning: Reference `author info' on page 5 undefined on input line 403.
-
-(./Final_Report.bbl
-Underfull \hbox (badness 5388) in paragraph at lines 10--17
-[]\OT1/cmr/m/n/10 Amir, El-ad David, Davis, Kara L, Tad-mor,
- []
-
-[5 <./tSNE_Monocytes&TCells_N=400-eps-converted-to.pdf> <./tSNE_Monocytes&TCell
-s_N=400_relabel-eps-converted-to.pdf> <./sSNE_AllCells_N=400-eps-converted-to.p
-df> <./sSNE_AllCells_N=400_relabel-eps-converted-to.pdf> <./sSNE_Monocytes&TCel
-ls_N=400-eps-converted-to.pdf> <./sSNE_Monocytes&TCells_N=400_relabel-eps-conve
-rted-to.pdf> <./EE_AllCells_N=400-eps-converted-to.pdf> <./EE_AllCells_N=400_re
-label-eps-converted-to.pdf>])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 441.
- [6
-
- <./EE_Monocytes&TCells_N=400-eps-converted-to.pdf> <./EE_Monocytes&TCells_N=40
-0_relabel-eps-converted-to.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 441.
+[4 <./PCA_T&Moncytes_N=400-eps-converted-to.pdf> <./PCA_T&Moncytes_N=400_relabe
+l-eps-converted-to.pdf> <./ISOMAP_AllCells_N=100-eps-converted-to.pdf> <./ISOMA
+P_Monoctypes&TCells_N=400-eps-converted-to.pdf> <./tSNE_AllCells_N=400-eps-conv
+erted-to.pdf> <./tSNE_AllCells_N=400_relabel-eps-converted-to.pdf> <./tSNE_Mono
+cytes&TCells_N=400-eps-converted-to.pdf> <./tSNE_Monocytes&TCells_N=400_relabel
+-eps-converted-to.pdf> <./sSNE_AllCells_N=400-eps-converted-to.pdf> <./sSNE_All
+Cells_N=400_relabel-eps-converted-to.pdf> <./sSNE_Monocytes&TCells_N=400-eps-co
+nverted-to.pdf> <./sSNE_Monocytes&TCells_N=400_relabel-eps-converted-to.pdf>]
+(./Final_Report.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 468.
+ [5 <./EE_AllCells_N=400-eps-converted-to.pdf> <./EE_AllCells_N=400_relabel-eps
+-converted-to.pdf> <./EE_Monocytes&TCells_N=400-eps-converted-to.pdf> <./EE_Mon
+ocytes&TCells_N=400_relabel-eps-converted-to.pdf>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 468.
 
 (./Final_Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 441.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 441.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 468.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 468.
 Package rerunfilecheck Info: File `Final_Report.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
-LaTeX Warning: There were undefined references.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 441.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 468.
  ) 
 Here is how much of TeX's memory you used:
- 8122 strings out of 493488
- 121467 string characters out of 3141326
- 226883 words of memory out of 3000000
- 11224 multiletter control sequences out of 15000+200000
- 13127 words of font info for 49 fonts, out of 3000000 for 9000
+ 8135 strings out of 493488
+ 121841 string characters out of 3141326
+ 225477 words of memory out of 3000000
+ 11239 multiletter control sequences out of 15000+200000
+ 12959 words of font info for 48 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 36i,11n,46p,1136b,424s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,11n,46p,1363b,410s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></
@@ -937,12 +918,11 @@ e/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2012/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2012/te
 xmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2012/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2012/texmf
--dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Final_Report.pdf (6 pages, 5809548 bytes).
+f-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Final_Report.pdf (5 pages, 5794215 bytes).
 PDF statistics:
- 429 PDF objects out of 1000 (max. 8388607)
- 341 compressed objects within 4 object streams
- 65 named destinations out of 1000 (max. 500000)
+ 399 PDF objects out of 1000 (max. 8388607)
+ 313 compressed objects within 4 object streams
+ 64 named destinations out of 1000 (max. 500000)
  101 words of extra memory for PDF output out of 10000 (max. 10000000)
 
