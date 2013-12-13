@@ -5,13 +5,15 @@ colors = DesiredCells.colors_relative;
 
 % PLOT - True Labels with Centroids
 % display('Plotting PCA - True Labels')
-figure('name',figName); hold on;
+% figure('name',figName); hold on;
+figure('name', figName, 'units','normalized','outerposition',[0 0 1 1]); hold on;
+
 for i = 1:length(DesiredCells.cell_types)
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;
 
     % Plot scatter for PCA
-    scatter(processed_data(lb:ub,1), processed_data(lb:ub,2), 20, colors(i,:), 'fill');        
+    scatter(processed_data(lb:ub,1), processed_data(lb:ub,2), 60, colors(i,:), 'fill');        
     
 end
 legend(DesiredCells.cell_types)
