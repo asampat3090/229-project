@@ -4,7 +4,8 @@ chunk_indices = DesiredCells.data_subset_indicies_for_merged_data;
 
 % PLOT - New Labels with Centroids
 % display('Plotting PCA - New Labels')
-figure('name',figName); hold on;
+% figure('name',figName); hold on;
+figure('name', figName, 'units','normalized','outerposition',[0 0 1 1]); hold on;
 for i = 1:length(DesiredCells.cell_types)
     lb = chunk_indices(i);
     ub = chunk_indices(i+1)-1;
@@ -13,7 +14,7 @@ for i = 1:length(DesiredCells.cell_types)
         ct = CellData.possible_cell_types{new_labels(j)};        
         r_idx = DesiredCells.RelativeIndexOfCellType(ct);
         rgb = DesiredCells.colors_relative(r_idx,:);
-        scatter(processed_data(j,1),processed_data(j,2), 20, rgb, 'fill');
+        scatter(processed_data(j,1),processed_data(j,2), 60, rgb, 'fill');
     end
 end
 title(plot_title);

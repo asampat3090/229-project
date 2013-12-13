@@ -37,11 +37,9 @@ pDC = Set({'Plasmacytoid DC'});
 Monocytes = Set({'CD11b- Monocyte', 'CD11bhi Monocyte', 'CD11bmid Monocyte'});
 
 % User Variables
-% whichCellTypes = Monocytes;
-whichCellTypes = pDC & NK & Monocytes;
-% whichCellTypes = NK;
+whichCellTypes = pDC & NK & Monocytes & TCells & BCells & StemCells;
+% whichCellTypes = TCells & Monocytes;
 numRandTrainExPerFile = 400; % 400 seems optimal for tsne 
-% hueSensitivity = 1.5;
 whichStimLevels = Set({'Basal'}); % Either 'Basal' or 'PV04', can contain both
 useSurfaceProteinsOnly = true;
 
@@ -96,15 +94,18 @@ PCA_time = toc;
 % User alters these variables
 processed_data = score_PCA;
 figName = 'PCA';
-plot_title = ['PCA: N/file=' num2str(numRandTrainExPerFile)];
 
 % CLUSTERING METRIC BASED ON AVERAGING
 [label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
-pca_label_err = label_err;
+plot_title = [figName ': N/file=' num2str(numRandTrainExPerFile) ', err=' num2str(label_err)];
 
-% Plot the processed data
+    % Plot the processed data
 plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plot_title = ['Relabel ' plot_title];
 plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
+
+%Save error
+pca_label_err = label_err;
 
 % Makes figures more presentable for papers
 makeFiguresPretty;
@@ -130,15 +131,17 @@ tsne_time = toc;
 
 % User alters these variables
 processed_data = tsne_output;
-figName = 'tSNE: Vladymyrov';
+figName = 'tSNE';
 plot_title = ['tSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
 
 % CLUSTERING METRIC BASED ON AVERAGING
 [label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
-tsne_label_err = label_err
+tsne_label_err = label_err;
+plot_title = [figName ': err=' num2str(label_err)];
 
 % Plot the processed data
 plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plot_title = ['Relabel ' plot_title];
 plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
 % Makes figures more presentable for papers
@@ -167,15 +170,17 @@ ssne_time = toc;
 
 % User alters these variables
 processed_data = ssne_output;
-figName = 'sSNE: Vladymyrov';
+figName = 'sSNE: ';
 plot_title = ['sSNE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
 
 % CLUSTERING METRIC BASED ON AVERAGING
 [label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
-ssne_label_err = label_err
+ssne_label_err = label_err;
+plot_title = [figName ': err=' num2str(label_err)];
 
 % Plot the processed data
 plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plot_title = ['Relabel ' plot_title];
 plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
 % Makes figures more presentable for papers
@@ -215,15 +220,17 @@ ee_time = toc;
 
 % User alters these variables
 processed_data = ee_output;
-figName = 'EE: Vladymyrov';
+figName = 'EE';
 plot_title = ['EE: iter #' num2str(length(E)), ', e=' num2str(E(end)) ', t=' num2str(T(end)), 'N/file=' num2str(numRandTrainExPerFile)];
 
 % CLUSTERING METRIC BASED ON AVERAGING
 [label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
-ee_label_err = label_err
+ee_label_err = label_err;
+plot_title = [figName ': err=' num2str(label_err)];
 
 % Plot the processed data
 plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title)
+plot_title = ['Relabel ' plot_title];
 plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, centroids, numRandTrainExPerFile, plot_title, new_labels)
 
 % Makes figures more presentable for papers
@@ -231,19 +238,24 @@ makeFiguresPretty;
 
 %% Merge select figures into 1 with subplots
 
-% % Find figures
-% figHandles_all = findobj('Type','figure'); % Get all
-% figHandles = [1 2]; % indexes to figure numbers
-% nrows = 1;
-% ncols = 2;
-% 
+% Find figures
+figHandles_all = findobj('Type','figure'); % Get all
+figHandles = [1 2]; % indexes to figure numbers
+nrows = 1;
+ncols = 2;
+
+mergeFiguresIntoSubplot(nrows, ncols, figHandles);
+
 % % Get subplot positions
 % nfindex = max(figHandles_all) + 1;
-% figure(nfindex); % Create new figure
+% nf = figure(nfindex); % Create new figure
 % sppos = []
 % for i = 1:length(figHandles)
-%     sppos = [sppos; get(subplot(nrows, ncols,i), 'pos')];
+%     ax = subplot(nrows, ncols,i);
+%     sppos = [sppos; get(ax, 'pos')];
+%     cla(ax);
 % end
+% cla(nf);
 % 
 % % Copy figures into subplots of new figure
 % new_splots = {};
@@ -253,7 +265,7 @@ makeFiguresPretty;
 % for i = 1:length(figHandles)
 %     set(new_splots{i}, 'pos', sppos(i,:));
 % end
-%
+
 
 %% %%%%%%%%%%%%% ALGORITHMS FROM DR TOOLBOX %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -344,33 +356,55 @@ isomap_time = toc;
 %
 %   [mappedX, mapping] = isomap(X, no_dims, k); 
 
-% Plot the Figure for Isomap
-plotIn3D = false;
-display('Plotting Isomap Result')
+
+% User alters these variables
+processed_data = score_isomap;
+figName = 'ISOMAP';
+
+% % % CLUSTERING METRIC BASED ON AVERAGING - WONT WORK WITH ISOMAP
+% % [label_err new_labels centroids]  = CentroidClusteringMetric(processed_data(:,1:2), DesiredCells);
+% plot_title = [figName ': N/file=' num2str(numRandTrainExPerFile) ', err=' num2str(label_err)];
+% plot_title = [figName];
+% 
+%     % Plot the processed data
+% plotTrueLabelsWithCentroids(figName, processed_data, DesiredCells, [], numRandTrainExPerFile, plot_title)
+% plot_title = ['Relabel ' plot_title];
+% plotNewLabelsWithCentroids(figName, processed_data, DesiredCells, [], numRandTrainExPerFile, plot_title, new_labels)
+
 figure('name','Isomap');
 hold on;
-for i = 1:whichCellTypes.length()
-    lb = chunk_indices(i);
-    ub = chunk_indices(i+1)-1;
-    if ub>size(score_isomap,1)
-        ub=size(score_isomap,1)
-    end
-    if(plotIn3D)
-        display('plotting 3D');
-        if(size(score_isomap,2)<3)
-            display('Cannot plot Isomap results in 3D - need more data - Run Isomap with no_dims of >=3');
-        else
-            scatter3(score_isomap(lb:ub,1),score_isomap(lb:ub,2),score_isomap(lb:ub,3), 20, colors(i,:));
-        end
-    else
-        % Plot scatter for Isomap
-        scatter(score_isomap(lb:ub,1),score_isomap(lb:ub,2), 20, colors(i,:));
-        title(['Isomap: N/file=' num2str(numRandTrainExPerFile)]);
-    end
-end
-legend(whichCellTypes.list)
-hold off;
-drawnow
+scatter(score_isomap(:,1),score_isomap(:,2), 60, 'fill');
+title(['Isomap: All Cell Types']);
+
+% % Plot the Figure for Isomap
+% % This code is just incorrect - isomap gives you fewer points then in the
+% % original data space, so you don't scatter per cell type
+% plotIn3D = false;
+% display('Plotting Isomap Result')
+% figure('name','Isomap');
+% hold on;
+% for i = 1:whichCellTypes.length()
+%     lb = chunk_indices(i);
+%     ub = chunk_indices(i+1)-1;
+%     if ub>size(score_isomap,1)
+%         ub=size(score_isomap,1)
+%     end
+%     if(plotIn3D)
+%         display('plotting 3D');
+%         if(size(score_isomap,2)<3)
+%             display('Cannot plot Isomap results in 3D - need more data - Run Isomap with no_dims of >=3');
+%         else
+%             scatter3(score_isomap(lb:ub,1),score_isomap(lb:ub,2),score_isomap(lb:ub,3), 20, colors(i,:));
+%         end
+%     else
+%         % Plot scatter for Isomap
+%         scatter(score_isomap(lb:ub,1),score_isomap(lb:ub,2), 20, colors(i,:), 'fill');
+%         title(['Isomap: N/file=' num2str(numRandTrainExPerFile)]);
+%     end
+% end
+% legend(whichCellTypes.list)
+% hold off;
+% drawnow
 
 % Find k-means clusters from reduced data from Isomap
 % [isomap_centroid_indices,isomap_centroid_locations,isomap_cluster_point_separation] = kmeans(score_isomap,15);

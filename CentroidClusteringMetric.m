@@ -15,6 +15,9 @@ chunk_indices = DesiredCells.data_subset_indicies_for_merged_data;
 mu = Inf*ones(length(CellData.possible_cell_types), size(metric_data,2)); 
 for i = 1:length(DesiredCells.cell_types)
     lb = chunk_indices(i); ub = chunk_indices(i+1)-1;
+    if ub>size(metric_data,1)
+        ub=size(metric_data,1);
+    end
     data_chunk = metric_data(lb:ub,:);
     idx = CellData.AbsoluteIndexOfCellType(DesiredCells.cell_types{i});
     mu(idx,:) = sum(data_chunk,1) ./ size(data_chunk,1);
