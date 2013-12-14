@@ -181,7 +181,7 @@ Linear methods such as Principal Components Analysis (PCA) and Multidimensional 
 Spectral methods like Locally Linear Embedding (LLE), ISOMAP, and Laplacian Eigenmaps (LE) seem like better candidates for dimensionality reduction of problems of this sort. For example, LE tries to preserve the local structure of the data while keeping the scale of the embedding data fixed, leading to good results on toy problems such as the swiss roll. We apply LLE and ISOMAP to this data set and show, rather counterintuitively, that the results are even worse than PCA.
 
 \subsection{Nonlinear Methods}
-Nonlinear methods, as demonstrated in the section below, are the most effective of the algorithms used for visualization of celllular protein data. Cellular protein data is largely believed to exist in multi-dimensional space in gaussian-distributed clumps that can have a high degree of overlap. These gaussians can exhibit high degrees of variation in their average and variance values. As such, we consider the variants of SNE \cite{Hinton:2002vs}, t-SNE \cite{VanderMaaten:2008tm} and s-SNE \cite{Cook:2007tb}, along with Elastic Embedding (EE) \cite{CarreiraPerpinan:2010tx} as prime candidates for effective visualization. These algorithms minimize objective functions that mimick attractive and repulsive forces in the mapping space, which keeps the images of nearby objects close while pushing all image clusters apart from each other. They take the form $E(X, \lambda) = E^+(X) + \lambda E^-(X)$ where $E^+(X)$ is the attractive term, $E^-(X)$ the repulsive term, $\lambda \geq 0$ is a fixed parameter, and $X = \{x_n\}$ is the set of points in the mapping space. The repulsive term significantly improves them over spectral methods like LE. 
+Nonlinear methods, as demonstrated in the section below, are the most effective of the algorithms used for visualization of celllular protein data. Cellular protein data is largely believed to exist in multi-dimensional space in gaussian-distributed clumps that can have a high degree of overlap. These gaussians can exhibit high degrees of variation in their average and variance values. As such, we consider the variants of SNE \cite{Hinton:2002vs}, t-SNE \cite{VanderMaaten:2008tm} and s-SNE \cite{Cook:2007tb}, along with Elastic Embedding (EE) \cite{CarreiraPerpinan:2010tx} as prime candidates for effective visualization. These algorithms minimize objective functions that mimic attractive and repulsive forces in the mapping space, which keeps the images of nearby objects close while pushing all image clusters apart from each other. They take the form $E(X, \lambda) = E^+(X) + \lambda E^-(X)$ where $E^+(X)$ is the attractive term, $E^-(X)$ the repulsive term, $\lambda \geq 0$ is a fixed parameter, and $X = \{x_n\}$ is the set of points in the mapping space. The repulsive term significantly improves them over spectral methods like LE. 
 
 %For comparison, we outline the objective functions $E$ of these algorithms.
 %
@@ -338,7 +338,7 @@ EE		& 41.84\% &12.46\% \\
 \begin{figure}[h!]
 \vskip 0.2in
 \begin{center}
-\subfloat[Original Labels]{\includegraphics[width=0.47\columnwidth, trim = 2.5in 0.5in 1in 2in]{sSNE_AllCells_N=400}}\quad
+\subfloat[Original Labels]{\includegraphics[width=0.47\columnwidth, trim = 2.1in 0.5in 1in 2in]{sSNE_AllCells_N=400}}\quad
 \subfloat[New Labels]{\includegraphics[width=0.47 \columnwidth,  trim = 2.5in 0.5in 1in 2in]{sSNE_AllCells_N=400_relabel}}\quad
 \end{center}
 \caption{sSNE on all cell subtypes with 400 cells per subtype}
@@ -350,7 +350,7 @@ EE		& 41.84\% &12.46\% \\
 \begin{figure}[h!]
 \vskip 0.2in
 \begin{center}
-\subfloat[Original Labels]{\includegraphics[width=0.47\columnwidth, trim = 2.5in 0.5in 1in 2in]{sSNE_Monocytes&TCells_N=400}}\quad
+\subfloat[Original Labels]{\includegraphics[width=0.47\columnwidth, trim = 2.1in 0.5in 1in 2in]{sSNE_Monocytes&TCells_N=400}}\quad
 \subfloat[New Labels]{\includegraphics[width=0.47 \columnwidth,  trim = 2.5in 0.5in 1in 2in]{sSNE_Monocytes&TCells_N=400_relabel}}\quad
 \end{center}
 \caption{sSNE on Monocytes and T Cells with 400 cells per subtype}
