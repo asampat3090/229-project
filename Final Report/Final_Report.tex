@@ -383,7 +383,7 @@ EE		& 41.84\% &12.46\% \\
 \end{figure}
 
 \subsection{Classification}
-Shifting our attention from visualization to classification, we compare the classification effectiveness of C-SVC and $\nu$-SVC SVM (per the LIBSVM library \cite{Chang:2011dt}) run on the original data to the projected data, and reach a counter-intuitive result. The SVM applied to the original data fails entirely, with low success rates. The SVM applied to the projected data classifies with significantly higher accuracies, depending on the dimensionality reduction algorithm used. Table~\ref{svmrates} shows the success rates of C-SVC and $\nu$-SVC with various kernels (with s-SNE omitted as its values are very close to t-SNE). We find that the best classification is achieved, with a success rate of 96.2\%, when using $\nu$-SVC based SVM with a polynomial kernel. 
+Shifting our attention from visualization to classification, we compare the classification effectiveness of C-SVC and $\nu$-SVC SVM (per the LIBSVM library \cite{Chang:2011dt}) run on the original data to the projected data, and reach a counter-intuitive result. The SVM applied to the original data fails entirely, with low success rates. The SVM applied to the projected data classifies with significantly higher accuracies, depending on the dimensionality reduction algorithm used. Table~\ref{svmrates} shows the success rates of C-SVC and $\nu$-SVC with various kernels (with s-SNE omitted as its values are very close to t-SNE). We find that the best classification is achieved, with a success rate of 96.2\%, when using $\nu$-SVC based SVM with a polynomial kernel on the PCA-reduced data. 
 
 \begin{table}[]
 \caption{SVM Classification Rate }
