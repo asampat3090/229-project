@@ -110,8 +110,9 @@ In the field of cancer immunology, scientists use the protein content of immune 
 It is of interest to cancer immunologists to find structure within multi-dimensional protein expression space and map it onto a lower dimensions (refered to henceforth as a map space) for ease of visualization and understanding. As cells change and evolve, so do the types and quantities of the proteins they express. This leads to a shifting of their representation in multi-dimensional space which can be tracked. Dimensionality reduction of original biological data coupled with a metric for how well the projection represents the original data would provide biologists with a powerful tool for understanding the structure of their data. To address these challenges we demonstrate:
 
 \begin{itemize}
-\item The application of linear and non-linear methods of dimensionality reduction of multi-dimensional protein data
-\item A metric-based comparison of how each algorithm performs
+\item Visualization: The application of linear and non-linear methods of dimensionality reduction of multi-dimensional protein data
+\item Visualization: A metric-based comparison of how each algorithm performs
+\item Classification: Application of SVMs to both the original data and to the dimensionality reduced data
 \end{itemize}
 
 % DATA REPRESENTATION
@@ -120,7 +121,7 @@ It is of interest to cancer immunologists to find structure within multi-dimensi
 
 \subsection{Data Acquisition}
 
-\textbf{Mass cytometry} is a single-cell multiparametric protein detection technology based on inductively coupled plasma mass spectrometry. It is an extension of flow cytometry in which antibodies are tagged with isotopically pure rare earth elements allowing simultaneous measurement of greater than 40 parameters while circumventing the issue of spectral overlap. In single-cell droplet form, the cells are passed through an elemental mass spectrometer and an integrator to generate an $m \times p$ matrix where $m$ is the number of cells processed and $p$ is the number of distinct proteins contained in the cell set. These matrices are stored as .FCS files in online databanks which we have been granted access to. Figure ~\ref{dataacquisition}, taken from \cite{Bendall:2011bm} shows this process. Table ~\ref{table_cell_type} lists the cell types and subtypes that are parsed using this method.
+\textbf{Mass cytometry} is a single-cell multiparametric protein detection technology based on inductively coupled plasma mass spectrometry. It is an extension of flow cytometry in which antibodies are tagged with isotopically pure rare earth elements allowing simultaneous measurement of greater than 40 parameters while circumventing the issue of spectral overlap. In single-cell droplet form, the cells are passed through an elemental mass spectrometer and an integrator to generate an $m \times p$ matrix where $m$ is the number of cells processed and $p$ is the number of distinct proteins contained in the cell set. These matrices are stored as .FCS files in online databanks which we have been granted access to. Figure 1, taken from \cite{Bendall:2011bm} shows this process. Table ~\ref{table_cell_type} lists the cell types and subtypes that are parsed using this method.
 
 \begin{figure}
 \vskip 0.2in
@@ -232,6 +233,8 @@ We quantify the quality of the various algorithms at accurately segregating diff
 \subsection{Linear Methods - PCA}
 We consider PCA over all 20 cell sub-types with 400 cells per cell sub-type and obtain a 62.18\% re-labeling error. Figure ~\ref{pca_plots_allcells} below shows the visualized data. It is clear that the overlap between points renders the map meaningless. The colored stars in the figures represent the centroids of each sub-type.
 
+Even when we reduce the number of sub-types to 7 (Monocytes and T cells), the performance is still abysmal at 48.43\% error, as shown in Figure ~\ref{pca_plots_monocytes&T}.
+
 \begin{figure}[h]
 \vskip 0.2in
 %\centering
@@ -241,10 +244,8 @@ We consider PCA over all 20 cell sub-types with 400 cells per cell sub-type and 
 \end{center}
 \caption{Principal Components Analysis on all cell sub-types with 400 cells per subtype}
 \label{pca_plots_allcells}
-\vskip 0.2in
+\vskip -0.2in
 \end{figure}
-
-Even when we reduce the number of sub-types to 7 (Monocytes and T cells), the performance is still abysmal at 48.43\% error, as shown in Figure ~\ref{pca_plots_monocytes&T}.
 
 \begin{figure}[h]
 \vskip 0.2in
@@ -383,7 +384,7 @@ EE		& 41.84\% &12.46\% \\
 \end{figure}
 
 \subsection{Classification}
-Shifting our attention from visualization to classification, we compare the classification effectiveness of C-SVC and $\nu$-SVC SVM (per the LIBSVM library \cite{Chang:2011dt}) run on the original data to the projected data, and reach a counter-intuitive result. The SVM applied to the original data fails entirely, with low success rates. The SVM applied to the projected data classifies with significantly higher accuracies, depending on the dimensionality reduction algorithm used. Table~\ref{svmrates} shows the success rates of C-SVC and $\nu$-SVC with various kernels (with s-SNE omitted as its values are very close to t-SNE). We find that the best classification is achieved, with a success rate of 96.2\%, when using $\nu$-SVC based SVM with a polynomial kernel on the PCA-reduced data. 
+Shifting our attention from visualization to classification, we compare the classification effectiveness of C-SVC and $\nu$-SVC SVM (per the LIBSVM library \cite{Chang:2011dt}) run on the original data to the projected data, and reach a counter-intuitive result. The SVM applied to the original data fails entirely, with low success rates. The SVM applied to the projected data classifies with significantly higher accuracies, depending on the dimensionality reduction algorithm used. Table~\ref{svmrates} shows the success rates of C-SVC and $\nu$-SVC with various kernels (with s-SNE omitted as its values are very close to t-SNE). We find that the best classification is achieved, with a success rate of 96.2\%, when using $\nu$-SVC based SVM with a polynomial kernel on the PCA-reduced data. The classifiers used are multiclass classifiers that train $\binom{\# cell types}{2}$ binary classifiers resulting in 190 decision boundaries that more effectively classify the 20 labels than a standard one vs all algorithm.
 
 \begin{table}[]
 \caption{SVM Classification Rate }
@@ -496,7 +497,7 @@ sigmoid		& 4.6\% 	& 71\% 	& 26.4 \% 	 	& 9.8 \% \\
 % Acknowledgements should only appear in the accepted version. 
 \section{Conclusion} 
 
-Human immune system cells are comprised of a variety of cell types and sub-types which are characterized by the proteins contained within them. Proteins embedded on the cell's surface are particularly effective at characterizing the type of cell, and through 'gating', biologists can label a cell's type from these proteins by plotting various permutations of two types of proteins at time. We apply dimensionality reduction considering only the surface proteins as features to aid the visualization of cells in this multi-dimensional protein space. We apply Principle Components Analysis, ISOMAP, elastic embedding, symmetric-stochastic neighbor embedding, and student t-distributed stochastic neighbor embedding to this problem and use a centroid-based relabeling metric to quantify the effectiveness of each visualization. We demonstrate the superiority of the nonlinear methods, with t-SNE being the most effective, while simultaneously showing that PCA and ISOMAP yield poor results. We further conclude that the data is nonlinear and that it supports the belief that clusters of healthy cells in this protein space are gaussian-distributed. 
+Human immune system cells are comprised of a variety of cell types and sub-types which are characterized by the proteins contained within them. Proteins embedded on the cell's surface are particularly effective at characterizing the type of cell. We apply dimensionality reduction considering only the surface proteins as features to aid the visualization of cells in this multi-dimensional protein space. We apply Principle Components Analysis, ISOMAP, elastic embedding, symmetric-stochastic neighbor embedding, and student t-distributed stochastic neighbor embedding to this problem and use a centroid-based relabeling metric to quantify the effectiveness of each visualization. We demonstrate the superiority of the nonlinear methods, with t-SNE being the most effective, while simultaneously showing that PCA and ISOMAP yield poor results. We further conclude that the data is nonlinear and that it supports the belief that clusters of healthy cells in this protein space are gaussian-distributed. 
 
 In addition, we demonstrate a substantial improvement in SVM-based classification of data by first reducing the dimensionality of the data and then applying classification on the reduced data. We find that by combining PCA with $\nu$-SVC based SVM and a polynomial kernel a 96.2\% classification rate is achieved. 
 
