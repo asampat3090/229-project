@@ -80,7 +80,7 @@
 
 % ABSTRACT
 \begin{abstract} 
-We present in this paper a way to effectively visualize multi-dimensional immune system cellular data by means of nonlinear methods. We find that Stochastic Neighbor Embedding (SNE), and it's variations, t-SNE and s-SNE, to be most effective at successfully mapping clusters of points into a two dimensional embedding space while preserving both the structure between similar points and the disparity between different clusters. Using a centroid-based metric that relabels points according to the cluster centroid to which they are closest, we conclude that SNE works significantly better than linear and spectral methods. In addtional, by using an optimization approach for SNE similar to Newton's Method, but with the Hessian of the objective function, $\nabla ^2 (E) $, replaced by its first term, we are able to run the SNE varients and EE two orders of magnitude faster than with standard optimization.
+We present in this paper a way to effectively visualize multi-dimensional immune system cellular data by means of nonlinear methods. We find that Stochastic Neighbor Embedding (SNE), and it's variations, t-SNE and s-SNE, to be most effective at successfully mapping clusters of points into a two dimensional embedding space while preserving both the structure between similar points and the disparity between different clusters. Using a centroid-based metric that relabels points according to the cluster centroid to which they are closest, we conclude that SNE works significantly better than linear and spectral methods. By using an optimization approach for SNE that follows the 'spectral direction' of descent, we are able to run the SNE varients and EE two orders of magnitude faster than with standard optimization. Finally, we demonstrate superior classification of data by first reducing its dimension then applying supervised learning using a C-SVC SVM and $\nu$-SVC SVM. 
 
 \end{abstract} 
 
@@ -90,18 +90,20 @@ We present in this paper a way to effectively visualize multi-dimensional immune
 
 \subsection{Immune Cell Data}
 
-In the field of cancer immunology, scientists use the protein content of immune system cells as a way to identify a cells corresponding type \cite{Bendall:2011bm}. For example, immune system cells, which are contained in bone marrow, are comprised of a variety of cell types, and to a large degree are uniquely identifiable by the proteins they contain. Highly sophisticated methods have been developed that process cells and return information on the types and quantities of proteins expressed in those cells. This data can then be viewed by an expert in the field and categorized. The laborious process of viewing the different dimensions of protein expression and categorizing a cell's type is known as gating. Figure ~\ref{CellGating}, below, taken from \cite{Amir:2013jp} shows this graphically.
+In the field of cancer immunology, scientists use the protein content of immune system cells as a way to identify a cells corresponding type \cite{Bendall:2011bm}. For example, immune system cells, which are contained in bone marrow, are comprised of a variety of cell types, and to a large degree are uniquely identifiable by the proteins they contain. Highly sophisticated methods have been developed that process cells and return information on the types and quantities of proteins expressed in those cells. This data can then be viewed by an expert in the field and categorized. The laborious process of viewing the different dimensions of protein expression and categorizing a cell's type is known as gating. 
 
-\begin{figure}[ht]
-\label{CellGating}
-\vskip 0.2in
-\begin{center}
-\centerline{\includegraphics[width=\columnwidth]{CellGating}}
-\caption{Strategy for cell gating: Two single dimensions of a cell are viewed at a time
-and through an iterative process the cell is classified}
-\end{center}
-\vskip -0.2in
-\end{figure} 
+%Figure ~\ref{CellGating}, below, taken from \cite{Amir:2013jp} shows this graphically.
+%
+%\begin{figure}[ht]
+%\label{CellGating}
+%\vskip 0.2in
+%\begin{center}
+%\centerline{\includegraphics[width=\columnwidth]{CellGating}}
+%\caption{Strategy for cell gating: Two single dimensions of a cell are viewed at a time
+%and through an iterative process the cell is classified}
+%\end{center}
+%\vskip -0.2in
+%\end{figure} 
 
 \subsection{Project Goals and Metrics}
 
@@ -380,6 +382,73 @@ EE		& 41.84\% &12.46\% \\
 \vskip -0.2in
 \end{figure}
 
+\subsection{Classification}
+Shifting our attention from visualization to classification, we compare the classification effectiveness of C-SVC and $\nu$-SVC SVM (per the LIBSVM library \cite{Chang:2011dt}) run on the original data to the projected data, and reach a counter-intuitive result. The SVM applied to the original data fails entirely, with low success rates. The SVM applied to the projected data classifies with significantly higher accuracies, depending on the dimensionality reduction algorithm used. Table~\ref{svmrates} shows the success rates of C-SVC and $\nu$-SVC with various kernels (with s-SNE omitted as its values are very close to t-SNE). We find that the best classification is achieved, with a success rate of 96.2\%, when using $\nu$-SVC based SVM with a polynomial kernel. 
+
+\begin{table}[]
+\caption{SVM Classification Rate }
+\label{svmrates}
+%\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
+
+\begin{tabular}{lcccr}
+\hline
+\abovespace\belowspace
+C-SVC 		& Original 	& PCA	 & t-SNE 		 & EE  \\
+\hline
+\abovespace
+radial 		& 5.2\% 	& 91.3\% 	& 78.3 \% 	 	& 59.1 \% \\
+polyn. 		& 4.6\%  	& 92.3\% 	& 74.6 \% 		& 55.6 \% \\ 
+linear 		& 5.53 \%  & 93.3\% & 74.07\% 	 	& 56.9 \% \\
+\belowspace
+sigmoid		& 5.8\% 	& 70.8\% 	& 8.4 \% 	 	& 7.6 \% \\
+\hline
+\hline
+\abovespace\belowspace
+nu-SVC 		& Original 	& PCA	 & t-SNE 		 & EE  \\
+\hline
+\abovespace
+radial 		& 5\% 	& 90\% 	& 76.4 \% 	 	& 58 \% \\
+polyn. 		& 4.4\%  	& 96.2\% 	& 66.8 \% 		& 51.2 \% \\ 
+linear 		& 5.8 \%  	& 91.4\% 	& 68.2\% 	 	& 46.8 \% \\
+\belowspace
+sigmoid		& 4.6\% 	& 71\% 	& 26.4 \% 	 	& 9.8 \% \\
+\hline
+\end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+
+%\begin{table}[h!]
+%\caption{SVM Classification Rate }
+%\label{svmrates}
+%%\vskip 0.15in
+%\begin{center}
+%\begin{small}
+%\begin{sc}
+%
+%\begin{tabular}{lcccr}
+%\hline
+%\abovespace\belowspace
+%C-SVC 		& Original & PCA & t-SNE 	& s-SNE & EE  \\
+%\hline
+%\abovespace
+%radial 	& 5.2\% 	& 91.27\% 	& 78.3 \% 	& 76.47 \% 	& 59.13 \% \\
+%polyn. 	& 4.6\%  	& 92.3\% 	& 74.6 \% 	& 72.1 \% 		& 55.6 \% \\ 
+%linear 		& 5.53 \%  & 93.27\% & 74.07\% 	& 72.67 \% 	& 56.93 \% \\
+%\belowspace
+%sigmoid		& 5.8\% 	& 70.8\% 	& 8.4 \% 	& 9.6 \% 		& 7.6 \% \\
+%\hline
+%\end{tabular}
+%\end{sc}
+%\end{small}
+%\end{center}
+%\vskip -0.1in
+%\end{table}
 
 
 %\subsection{Citations and References} 
@@ -446,9 +515,9 @@ We would like to thank Karen Sachs (Stanford University) and Andrew Gentes (Stan
 % references without citing it in the main text, use \nocite
 %\nocite{Bendall:2011bm}
 
-
-
-\bibliography{Final_Report_bib2}
+{\footnotesize
+\bibliography{Final_Report_bib2}}
+%\bibliography{Final_Report_bib2}
 %%\bibliographystyle{icml2012}
 \bibliographystyle{naturemag}
 

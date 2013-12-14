@@ -12,21 +12,6 @@
 \newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{332}},
   \bibinfo{pages}{687--696} (\bibinfo{year}{2011}).
 
-\bibitem{Amir:2013jp}
-\bibinfo{author}{Amir, E.-a.~D.} \emph{et~al.}
-\newblock \bibinfo{title}{{viSNE enables visualization of high dimensional
-  single-cell data and reveals phenotypic heterogeneity of leukemia}}.
-\newblock \emph{\bibinfo{journal}{Nature Biotechnology}}
-  \textbf{\bibinfo{volume}{31}}, \bibinfo{pages}{545--552}
-  (\bibinfo{year}{2013}).
-
-\bibitem{Vladymyrov:2012ws}
-\bibinfo{author}{Vladymyrov, M.} \& \bibinfo{author}{Carreira-Perpinan, M.}
-\newblock \bibinfo{title}{{Partial-Hessian strategies for fast learning of
-  nonlinear embeddings}}.
-\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:1206.4646}}
-  (\bibinfo{year}{2012}).
-
 \bibitem{Hinton:2002vs}
 \bibinfo{author}{Hinton, G.~E.} \& \bibinfo{author}{Roweis, S.~T.}
 \newblock \bibinfo{title}{{1. Hinton, G. E. {\&} Roweis, S. T. Stochastic
@@ -34,20 +19,6 @@
   Scholar}}.
 \newblock \emph{\bibinfo{journal}{Advances in neural information {\ldots}}}
   (\bibinfo{year}{2002}).
-
-\bibitem{Nam:2004jm}
-\bibinfo{author}{Nam, K.}, \bibinfo{author}{Je, H.} \& \bibinfo{author}{Choi,
-  S.}
-\newblock \bibinfo{title}{{Fast stochastic neighbor embedding: a trust-region
-  algorithm}}.
-\newblock In \emph{\bibinfo{booktitle}{Neural Networks, 2004. Proceedings. 2004
-  IEEE International Joint Conference on}} (\bibinfo{year}{2004}).
-
-\bibitem{CarreiraPerpinan:2010tx}
-\bibinfo{author}{Carreira-Perpin{\'a}n, M.~A.}
-\newblock \bibinfo{title}{{The Elastic Embedding Algorithm for Dimensionality
-  Reduction.}}
-\newblock \emph{\bibinfo{journal}{ICML}}  (\bibinfo{year}{2010}).
 
 \bibitem{VanderMaaten:2008tm}
 \bibinfo{author}{Van~der Maaten, L.} \& \bibinfo{author}{Hinton, G.}
@@ -62,5 +33,25 @@
   maps}}.
 \newblock \emph{\bibinfo{journal}{International {\ldots}}}
   (\bibinfo{year}{2007}).
+
+\bibitem{CarreiraPerpinan:2010tx}
+\bibinfo{author}{Carreira-Perpin{\'a}n, M.~A.}
+\newblock \bibinfo{title}{{The Elastic Embedding Algorithm for Dimensionality
+  Reduction.}}
+\newblock \emph{\bibinfo{journal}{ICML}}  (\bibinfo{year}{2010}).
+
+\bibitem{Vladymyrov:2012ws}
+\bibinfo{author}{Vladymyrov, M.} \& \bibinfo{author}{Carreira-Perpinan, M.}
+\newblock \bibinfo{title}{{Partial-Hessian strategies for fast learning of
+  nonlinear embeddings}}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:1206.4646}}
+  (\bibinfo{year}{2012}).
+
+\bibitem{Chang:2011dt}
+\bibinfo{author}{Chang, C.-C.} \& \bibinfo{author}{Lin, C.-J.}
+\newblock \bibinfo{title}{{LIBSVM}}.
+\newblock \emph{\bibinfo{journal}{ACM Transactions on Intelligent Systems and
+  Technology}} \textbf{\bibinfo{volume}{2}}, \bibinfo{pages}{1--27}
+  (\bibinfo{year}{2011}).
 
 \end{thebibliography}
