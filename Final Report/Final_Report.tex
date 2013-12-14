@@ -420,7 +420,7 @@ sigmoid		& 4.6\% 	& 71\% 	& 26.4 \% 	 	& 9.8 \% \\
 \end{sc}
 \end{small}
 \end{center}
-\vskip -0.1in
+\vskip -0.2in
 \end{table}
 
 %\begin{table}[h!]
@@ -496,7 +496,9 @@ sigmoid		& 4.6\% 	& 71\% 	& 26.4 \% 	 	& 9.8 \% \\
 % Acknowledgements should only appear in the accepted version. 
 \section{Conclusion} 
 
-Human immune system cells are comprised of a variety of cell types and sub-types. Each of these cells can be characterized by the proteins contained within it, with similar cells containing similar amounts of proteins. Proteins embedded on the cell's surface are known in biology to be particularly effective at characterizing the type of cell, and through a laborious process known as 'gating', biologists can label a cell's type from these proteins by plotting various permutations of two types of proteins at time. Given 41 different cell proteins, 17 of which are surface proteins, we propose dimensionality reduction considering only the surface proteins as features to aid the visualization of cells in this multi-dimensional protein space. We apply Principle Components Analysis, ISOMAP, elastic embedding, symmetric-stochastic neighbor embedding, and student t-distributed stochastic neighbor embedding to this problem and use a centroid-based relabeling metric to quantify the effectiveness of each visualization. We demonstrate the superiority of the nonlinear methods, with t-SNE being the most effective, while simultaneously showing that PCA and ISOMAP yield poor results. We further conclude that the data is nonlinear and that it supports the belief that clusters of healthy cells in this protein space are gaussian-distributed. 
+Human immune system cells are comprised of a variety of cell types and sub-types which are characterized by the proteins contained within them. Proteins embedded on the cell's surface are particularly effective at characterizing the type of cell, and through 'gating', biologists can label a cell's type from these proteins by plotting various permutations of two types of proteins at time. We apply dimensionality reduction considering only the surface proteins as features to aid the visualization of cells in this multi-dimensional protein space. We apply Principle Components Analysis, ISOMAP, elastic embedding, symmetric-stochastic neighbor embedding, and student t-distributed stochastic neighbor embedding to this problem and use a centroid-based relabeling metric to quantify the effectiveness of each visualization. We demonstrate the superiority of the nonlinear methods, with t-SNE being the most effective, while simultaneously showing that PCA and ISOMAP yield poor results. We further conclude that the data is nonlinear and that it supports the belief that clusters of healthy cells in this protein space are gaussian-distributed. 
+
+In addition, we demonstrate a substantial improvement in SVM-based classification of data by first reducing the dimensionality of the data and then applying classification on the reduced data. We find that by combining PCA with $\nu$-SVC based SVM and a polynomial kernel a 96.2\% classification rate is achieved. 
 
 Our work provides a general tool which biologists can use to visualize and better understand multi-dimensional cellular protein data. This is a first step towards automated cell-labelling and further work could yield a scalable platform by which both healthy and unhealthy immune system cells could be easily categorized, leading to a cancerous-cell detection system. Additionally this can be used by researchers to track how immune system cells' protein content changes as they mature, evolve, and differentiate. 
 
